@@ -2,12 +2,12 @@ import 'dart:math';
 
 import 'package:flutter/material.dart';
 import 'package:krystl/core/extensions/context_extension.dart';
-import 'package:krystl/core/extensions/widget_extension.dart';
 import 'package:krystl/core/network/firebase_manager.dart';
 import 'package:krystl/view/category/category.viewmodel.dart';
 import 'package:solar_icons/solar_icons.dart';
 
 import '../../core/base/base_view.dart';
+import 'category.model.dart';
 
 /// Created by Balaji Malathi on 5/25/2024 at 18:20.
 class CategoryView extends StatefulWidget {
@@ -54,8 +54,8 @@ class _CategoryViewState extends State<CategoryView>
       builder: (context, model, child) => Scaffold(
         floatingActionButton: FloatingActionButton(
           child: Icon(SolarIconsBold.addCircle),
-          onPressed: (){
-            model.addCategory();
+          onPressed: () {
+            model.addCategory(null);
           },
         ),
         body: NestedScrollView(
@@ -88,75 +88,63 @@ class _CategoryViewState extends State<CategoryView>
                   )),
             ];
           },
-          body: Column(
-            children: [
-              Expanded(
-                child: StreamBuilder(
-                  stream: FirestoreService.instance
-                      .listenToCollection('/${model.uid}/master/category'),
-                  builder: (context, snapshot) {
-                    if (snapshot.connectionState == ConnectionState.waiting) {
-                      // If the connection is still waiting, show a loading indicator
-                      return Center(child: CircularProgressIndicator());
-                    } else if (snapshot.hasError) {
-                      // If there is an error with the stream, display an error message
-                      return Text('Error: ${snapshot.error}');
-                    } else if (snapshot.hasData) {
-                      // If there is data available, display it
-                      final documents = snapshot.data!.docs;
-                      return GridView.builder(
-                        itemCount: documents.length,
-                        padding: EdgeInsets.zero,
-                        gridDelegate:
-                            const SliverGridDelegateWithFixedCrossAxisCount(
-                                crossAxisCount: 2),
-                        itemBuilder: (BuildContext context, int index) {
-                          return Container(
-                            color: Color(documents[index]["color"])
-                                .withOpacity(0.2),
-                            padding: EdgeInsets.all(24),
-                            child: Column(
-                              crossAxisAlignment: CrossAxisAlignment.start,
-                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                              children: [
-                                Icon(
-                                  IconData(documents[index]["icon"],
-                                      fontFamily: "MaterialIcons"),
-                                  color: Color(documents[index]["color"]), size: 36,
-                                ),
-                                Text(documents[index]["name"], style: context.textTheme.titleLarge,),
-                              ],
+          body: StreamBuilder(
+            stream: FirestoreService.instance
+                .listenToCollection('/${model.uid}/master/category'),
+            builder: (context, snapshot) {
+              if (snapshot.connectionState == ConnectionState.waiting) {
+                // If the connection is still waiting, show a loading indicator
+                return const Center(child: CircularProgressIndicator());
+              } else if (snapshot.hasError) {
+                // If there is an error with the stream, display an error message
+                return Text('Error: ${snapshot.error}');
+              } else if (snapshot.hasData) {
+                // If there is data available, display it
+                final documents = snapshot.data!.docs;
+                return GridView.builder(
+                  itemCount: documents.length,
+                  padding: EdgeInsets.zero,
+                  gridDelegate:
+                      const SliverGridDelegateWithFixedCrossAxisCount(
+                          crossAxisCount: 2),
+                  itemBuilder: (BuildContext context, int index) {
+                    return InkWell(
+                      onTap: () {
+                        model.addCategory(CategoryModel(
+                            color: documents[index]["color"],
+                            icon: documents[index]["icon"],
+                            name: documents[index]["name"],
+                            id: documents[index].id));
+                      },
+                      child: Container(
+                        color: Color(documents[index]["color"])
+                            .withOpacity(0.2),
+                        padding: const EdgeInsets.all(24),
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          mainAxisAlignment:
+                              MainAxisAlignment.spaceBetween,
+                          children: [
+                            Icon(
+                              IconData(documents[index]["icon"],
+                                  fontFamily: "MaterialIcons"),
+                              color: Color(documents[index]["color"]),
+                              size: 36,
                             ),
-                          );
-                        },
-                      );
-                    } else {
-                      // If there is no data available, display a message
-                      return Text('No data available');
-                    }
+                            Text(
+                              documents[index]["name"],
+                              style: context.textTheme.titleLarge,
+                            ),
+                          ],
+                        ),
+                      ),
+                    );
                   },
-                ),
-              ),
-              // ElevatedButton(
-              //   style: TextButton.styleFrom(
-              //     elevation: 0,
-              //     backgroundColor: context.colors.primaryContainer,
-              //     foregroundColor: context.colors.onPrimaryContainer,
-              //     shape: const RoundedRectangleBorder(
-              //       borderRadius: BorderRadius.all(Radius.circular(8)),
-              //     ),
-              //     minimumSize: Size(context.width - 32, 48),
-              //   ),
-              //   onPressed: () {
-              //     model.addCategory();
-              //   },
-              //   child: Text(
-              //     "Add Category".toUpperCase(),
-              //     style: context.textTheme.bodyLarge
-              //         ?.copyWith(fontWeight: FontWeight.w700),
-              //   ),
-              // ).pa(16)
-            ],
+                );
+              } else {
+                return Text('No data available');
+              }
+            },
           ),
         ),
       ),
