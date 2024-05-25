@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:krystl/view/category/category.view.dart';
 
+import '../../view/budget/budget.view.dart';
 import '../../view/home/home.view.dart';
 import '../../view/splash.view.dart';
 import 'route_constant.dart';
@@ -33,6 +34,8 @@ class RouterGenerator {
         return navigate(const HomeView(), settings);
       case RouterConstant.category:
         return navigate(const CategoryView(), settings);
+      case RouterConstant.budget:
+        return navigate(const BudgetView(), settings);
       default:
         return MaterialPageRoute(
           builder: (context) => const NotFoundNavigationWidget(),
