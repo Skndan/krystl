@@ -1,0 +1,90 @@
+{
+  "project_info": {
+    "project_number": "449223671429",
+    "project_id": "skndan-8f970",
+    "storage_bucket": "skndan-8f970.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:449223671429:android:635aaa48ae1a04e4c9b3ec",
+        "android_client_info": {
+          "package_name": "com.skndan.krystl"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "449223671429-170h5qi7snrcgr5kp6i0o8trvreica51.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyC2C-VKY2_vkPZdCclP7uuesKvYmA9oWn0"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "449223671429-170h5qi7snrcgr5kp6i0o8trvreica51.apps.googleusercontent.com",
+              "client_type": 3
+            },
+            {
+              "client_id": "449223671429-4s0hu87k3qj22f9v58dqropmakg6jace.apps.googleusercontent.com",
+              "client_type": 2,
+              "ios_info": {
+                "bundle_id": "com.skndan.karkka"
+              }
+            }
+          ]
+        }
+      }
+    },
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:449223671429:android:ca7fb62ffa16cb26c9b3ec",
+        "android_client_info": {
+          "package_name": "com.skndan.peeter"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "449223671429-7rohh2f16sem10lb8svv0iivtji1mjkk.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.skndan.peeter",
+            "certificate_hash": "8afee42ed9338551849b87cda791f06e990519e3"
+          }
+        },
+        {
+          "client_id": "449223671429-170h5qi7snrcgr5kp6i0o8trvreica51.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyC2C-VKY2_vkPZdCclP7uuesKvYmA9oWn0"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "449223671429-170h5qi7snrcgr5kp6i0o8trvreica51.apps.googleusercontent.com",
+              "client_type": 3
+            },
+            {
+              "client_id": "449223671429-4s0hu87k3qj22f9v58dqropmakg6jace.apps.googleusercontent.com",
+              "client_type": 2,
+              "ios_info": {
+                "bundle_id": "com.skndan.karkka"
+              }
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
