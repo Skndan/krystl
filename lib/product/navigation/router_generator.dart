@@ -4,6 +4,7 @@ import 'package:krystl/view/category/category.view.dart';
 import '../../view/budget/budget.view.dart';
 import '../../view/home/home.view.dart';
 import '../../view/splash.view.dart';
+import '../../view/upi/upi.view.dart';
 import 'route_constant.dart';
 
 /// Navigation Route which generate the routes
@@ -36,6 +37,8 @@ class RouterGenerator {
         return navigate(const CategoryView(), settings);
       case RouterConstant.budget:
         return navigate(const BudgetView(), settings);
+      case RouterConstant.upi:
+        return navigate(const UpiView(), settings);
       default:
         return MaterialPageRoute(
           builder: (context) => const NotFoundNavigationWidget(),
