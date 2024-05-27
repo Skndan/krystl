@@ -92,6 +92,7 @@ class _ExpenseFormWidgetState extends State<ExpenseFormWidget> {
                     //model.setContext(context);
                     model.init();
                     model.getCategory();
+                    model.getBalance();
                   },
                   builder: (context, model, child) => model.state ==
                           ViewState.Busy
@@ -219,8 +220,14 @@ class _ExpenseFormWidgetState extends State<ExpenseFormWidget> {
                                             .insert(
                                                 '/${FirebaseAuth.instance.currentUser?.uid}/expense/2024',
                                                 dd)
-                                            .then((s) {
-                                          Navigator.pop(context);
+                                            .then((s) async {
+                                          await _firestoreService
+                                              .updateBalance(
+                                                  "${FirebaseAuth.instance.currentUser?.uid}",
+                                                  dd)
+                                              .then((s) {
+                                            Navigator.pop(context);
+                                          });
                                         });
                                       }
                                       // debugPrint(dd.toString());
@@ -281,8 +288,8 @@ class _ExpenseFormWidgetState extends State<ExpenseFormWidget> {
                                                 widget.initialValue["id"],
                                                 dd)
                                             .then((s) {
-                                              textSecondFocusNode.requestFocus();
-                                              widget.formKey.currentState?.reset();
+                                          textSecondFocusNode.requestFocus();
+                                          widget.formKey.currentState?.reset();
                                         });
                                       } else {
                                         await _firestoreService
@@ -290,8 +297,8 @@ class _ExpenseFormWidgetState extends State<ExpenseFormWidget> {
                                                 '/${FirebaseAuth.instance.currentUser?.uid}/expense/2024',
                                                 dd)
                                             .then((s) {
-                                              textSecondFocusNode.requestFocus();
-                                              widget.formKey.currentState?.reset();
+                                          textSecondFocusNode.requestFocus();
+                                          widget.formKey.currentState?.reset();
                                         });
                                       }
                                       // debugPrint(dd.toString());

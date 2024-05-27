@@ -18,10 +18,14 @@ class HomeViewModel extends BaseModel with BaseViewModel {
   //region Variable Initialization
   final FirestoreService _firestoreService = FirestoreService.instance;
 
-  //endregion
-
   String? profile = "", displayName = "";
   String uid = "";
+
+  double todayExpense = 0.0;
+  double balance = 0.0;
+  double dailyFuel = 0.0;
+
+  //endregion
 
   @override
   Future<void> init() async {
@@ -66,7 +70,10 @@ class HomeViewModel extends BaseModel with BaseViewModel {
             formKey: formKey,
             initialValue: const {},
           );
-        });
+        }).then((value) async {
+      await getExpenses();
+      await getBalance();
+    });
   }
 
   void checkBudget() {}
@@ -98,9 +105,45 @@ class HomeViewModel extends BaseModel with BaseViewModel {
   }
 
   Future getExpenses() async {
+    todayExpense = 0.0;
     setState(ViewState.Busy);
     expenses = await _firestoreService.fetchExpensesWithCategory();
+    for (var item in expenses) {
+      todayExpense += double.parse(item["expense"]);
+    }
     notifyListeners();
     setState(ViewState.Idle);
+  }
+
+  Future getBalance() async {
+    balance = 0;
+    setState(ViewState.Busy);
+    balance = await _firestoreService.getBalance(uid);
+
+    int daysRemaining = getRemainingDaysInMonth() + 5;
+
+    // get remaining days
+    dailyFuel = balance / daysRemaining.toDouble();
+    notifyListeners();
+    setState(ViewState.Idle);
+  }
+
+  int getRemainingDaysInMonth() {
+    DateTime now = DateTime.now();
+    int year = now.year;
+    int month = now.month;
+
+    // Get the first day of the next month
+    DateTime firstDayOfNextMonth =
+        (month < 12) ? DateTime(year, month + 1, 1) : DateTime(year + 1, 1, 1);
+
+    // Last day of the current month is one day before the first day of the next month
+    DateTime lastDayOfMonth = firstDayOfNextMonth.subtract(Duration(days: 1));
+
+    // Calculate the remaining days
+    int remainingDays =
+        lastDayOfMonth.difference(now).inDays + 1; // +1 to include today
+
+    return remainingDays;
   }
 }

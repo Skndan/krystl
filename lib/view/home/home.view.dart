@@ -1,9 +1,11 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:krystl/core/extensions/context_extension.dart';
 import 'package:krystl/core/extensions/widget_extension.dart';
 import 'package:krystl/core/navigation/router_service.dart';
+import 'package:krystl/product/package/animated_flipper_counter.dart';
 import 'package:krystl/view/home/home.viewmodel.dart';
 import 'package:provider/provider.dart';
 import 'package:solar_icons/solar_icons.dart';
@@ -33,6 +35,7 @@ class _HomeViewState extends State<HomeView> {
         model.init();
         model.checkBudget();
         model.getExpenses();
+        model.getBalance();
       },
       builder: (context, model, child) => Scaffold(
         appBar: AppBar(
@@ -53,6 +56,12 @@ class _HomeViewState extends State<HomeView> {
           centerTitle: true,
           actions: [
             IconButton(
+                onPressed: () {
+                  model.getExpenses();
+                  model.getBalance();
+                },
+                icon: const Icon(SolarIconsBold.refreshCircle)),
+            IconButton(
               onPressed: () {
                 model.changeTheme();
               },
@@ -64,9 +73,7 @@ class _HomeViewState extends State<HomeView> {
         ),
         floatingActionButton: FloatingActionButton.large(
           onPressed: () async {
-            model.getExpenses();
-            // await GoogleSignIn().signOut();
-            // RouterService.instance.pushAndClear(RouterConstant.root);
+            RouterService.instance.pushAndClear(RouterConstant.upi);
           },
         ),
         floatingActionButtonLocation: FloatingActionButtonLocation.centerFloat,
@@ -98,10 +105,19 @@ class _HomeViewState extends State<HomeView> {
                             Text("Your Balance",
                                 style: context.textTheme.titleMedium?.copyWith(
                                     color: context.colors.onPrimaryContainer)),
-                            Text("\$5",
-                                style: context.textTheme.headlineLarge?.copyWith(
-                                    fontWeight: FontWeight.w700,
-                                    color: context.colors.onPrimaryContainer)),
+                            AnimatedFlipCounter(
+                              prefix: "₹",
+                              value: model.balance.toInt(),
+                              duration: const Duration(milliseconds: 1000),
+                              negativeSignDuration:
+                                  const Duration(milliseconds: 1000),
+                              textStyle: context.textTheme.headlineLarge
+                                  ?.copyWith(
+                                      letterSpacing: -2,
+                                      fontWeight: FontWeight.w700,
+                                      color:
+                                          context.colors.onTertiaryContainer),
+                            ),
                           ],
                         ),
                       ],
@@ -120,19 +136,28 @@ class _HomeViewState extends State<HomeView> {
                             children: [
                               Column(
                                 crossAxisAlignment: CrossAxisAlignment.start,
-                                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                mainAxisAlignment:
+                                    MainAxisAlignment.spaceBetween,
                                 children: [
                                   Text("Burned Today",
                                       style: context.textTheme.titleMedium
                                           ?.copyWith(
                                               color: context
                                                   .colors.onTertiaryContainer)),
-                                  Text("\$5",
-                                      style: context.textTheme.headlineLarge
-                                          ?.copyWith(
-                                              fontWeight: FontWeight.w700,
-                                              color: context
-                                                  .colors.onTertiaryContainer)),
+                                  AnimatedFlipCounter(
+                                    prefix: "₹",
+                                    value: model.todayExpense.toInt(),
+                                    duration:
+                                        const Duration(milliseconds: 1000),
+                                    negativeSignDuration:
+                                        const Duration(milliseconds: 1000),
+                                    textStyle: context.textTheme.headlineLarge
+                                        ?.copyWith(
+                                            letterSpacing: -2,
+                                            fontWeight: FontWeight.w700,
+                                            color: context
+                                                .colors.onTertiaryContainer),
+                                  ),
                                 ],
                               ),
                             ],
@@ -150,19 +175,28 @@ class _HomeViewState extends State<HomeView> {
                             children: [
                               Column(
                                 crossAxisAlignment: CrossAxisAlignment.start,
-                                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                mainAxisAlignment:
+                                    MainAxisAlignment.spaceBetween,
                                 children: [
                                   Text("Daily Fuel",
                                       style: context.textTheme.titleMedium
                                           ?.copyWith(
-                                              color: context
-                                                  .colors.onSecondaryContainer)),
-                                  Text("\$5",
-                                      style: context.textTheme.headlineLarge
-                                          ?.copyWith(
-                                              fontWeight: FontWeight.w700,
-                                              color: context
-                                                  .colors.onSecondaryContainer)),
+                                              color: context.colors
+                                                  .onSecondaryContainer)),
+                                  AnimatedFlipCounter(
+                                    prefix: "₹",
+                                    value: model.dailyFuel.toInt(),
+                                    duration:
+                                        const Duration(milliseconds: 1000),
+                                    negativeSignDuration:
+                                        const Duration(milliseconds: 1000),
+                                    textStyle: context.textTheme.headlineLarge
+                                        ?.copyWith(
+                                            letterSpacing: -2,
+                                            fontWeight: FontWeight.w700,
+                                            color: context
+                                                .colors.onSecondaryContainer),
+                                  ),
                                 ],
                               ),
                             ],
@@ -176,18 +210,19 @@ class _HomeViewState extends State<HomeView> {
                       Expanded(
                         child: GestureDetector(
                           onTap: () {
-                            RouterService.instance.pushTo(RouterConstant.budget);
+                            RouterService.instance
+                                .pushTo(RouterConstant.budget);
                           },
                           child: SizedBox(
                             child: Column(
                               children: [
                                 Container(
                                   decoration: BoxDecoration(
-                                      color: context.colors.primary,
+                                      color: context.colors.primaryContainer,
                                       shape: BoxShape.circle),
                                   child: Icon(
                                     SolarIconsBold.moneyBag,
-                                    color: context.colors.primaryContainer,
+                                    color: context.colors.primary,
                                   ).pa(24),
                                 ).pb(8),
                                 Text(
@@ -299,25 +334,51 @@ class _HomeViewState extends State<HomeView> {
                   ).pt(24),
                 ],
               ).phv(16, 0),
-              ...model.expenses.map((e) => ListTile(
-                    leading: Container(
-                        padding: EdgeInsets.all(12),
-                        decoration: BoxDecoration(
-                            shape: BoxShape.circle,
-                            color:
-                                Color(e["category"]["color"]).withOpacity(0.2)),
-                        child: Icon(
-                            IconData(e["category"]["icon"],
-                                fontFamily: "MaterialIcons"),
-                            color: Color(e["category"]["color"]), size: 20,)),
-                    title: Text(e["category"]["name"], style: context.textTheme.titleMedium,),
-                    trailing: Text("\$${e["expense"]}",
-                        style: context.textTheme.headlineMedium
-                            ?.copyWith(fontWeight: FontWeight.w600)),
-                    shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(16)),
-                    onTap: () {},
-                  ))
+              model.expenses.isEmpty
+                  ? Column(
+                      mainAxisSize: MainAxisSize.min,
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        Center(
+                            child:
+                                Image.asset('assets/image/empty-document.png')),
+                        Text("No transactions so far",
+                            style: context.textTheme.titleMedium
+                                ?.copyWith(fontWeight: FontWeight.w600))
+                      ],
+                    )
+                  : Container(),
+              ...model.expenses.map((e) {
+                var timestamp = e['date'] as Timestamp;
+                return ListTile(
+                  leading: Container(
+                      padding: const EdgeInsets.all(12),
+                      decoration: BoxDecoration(
+                          shape: BoxShape.circle,
+                          color:
+                              Color(e["category"]["color"]).withOpacity(0.2)),
+                      child: Icon(
+                        IconData(e["category"]["icon"],
+                            fontFamily: "MaterialIcons"),
+                        color: Color(e["category"]["color"]),
+                        size: 20,
+                      )),
+                  title: Text(
+                    e["category"]["name"],
+                    style: context.textTheme.titleMedium,
+                  ),
+                  subtitle: Text(
+                    timestamp.toFormattedString(),
+                    style: context.textTheme.titleSmall,
+                  ),
+                  trailing: Text("₹${e["expense"]}",
+                      style: context.textTheme.headlineMedium
+                          ?.copyWith(fontWeight: FontWeight.w600)),
+                  shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(16)),
+                  onTap: () {},
+                );
+              })
             ],
           ),
         ),
