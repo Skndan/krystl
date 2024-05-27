@@ -75,9 +75,19 @@ class FirestoreService {
   }
 
   Future<List<Map<String, dynamic>>> fetchExpensesWithCategory() async {
+    DateTime now = DateTime.now();
+    DateTime startOfDay = DateTime(now.year, now.month, now.day);
+    DateTime startOfNextDay = startOfDay.add(Duration(days: 1));
+
+    Timestamp startOfDayTimestamp = Timestamp.fromDate(startOfDay);
+    Timestamp startOfNextDayTimestamp = Timestamp.fromDate(startOfNextDay);
+
     try {
       QuerySnapshot expensesSnapshot = await _db
           .collection('/${FirebaseAuth.instance.currentUser?.uid}/expense/2024')
+          .where('createdAt', isGreaterThanOrEqualTo: startOfDayTimestamp)
+          .where('createdAt', isLessThan: startOfNextDayTimestamp)
+          .orderBy("createdAt", descending: true)
           .get();
       List<Map<String, dynamic>> expenses = [];
 
@@ -117,4 +127,71 @@ class FirestoreService {
   Stream<QuerySnapshot> listenToCollection(String collectionPath) {
     return _db.collection(collectionPath).snapshots();
   }
+
+  Future updateBalance(String uid, Map<String, dynamic> dd) async {
+//DocumentReference
+    String budgetDocId = "";
+    QuerySnapshot querySnapshot = await _db
+        .collection('/${uid}/master/budget')
+        .where("year", isEqualTo: DateTime.now().year)
+        .where("month", isEqualTo: monthMapInverse[DateTime.now().month])
+        .get();
+
+    if (querySnapshot.docs.isNotEmpty) {
+      budgetDocId = querySnapshot.docs.first.id;
+    } else {
+      throw Exception(
+          "No budget document found for the specified month and year");
+    }
+
+    final budgetRef = _db.collection('/$uid/master/budget').doc(budgetDocId);
+
+    await _db.runTransaction((transaction) async {
+      // Get the budget document
+      DocumentSnapshot budgetSnapshot = await transaction.get(budgetRef);
+      if (!budgetSnapshot.exists) {
+        throw Exception("Budget document does not exist!");
+      }
+
+      // Calculate the new balance
+      double currentBalance = budgetSnapshot['balance'].toDouble();
+      double newBalance = currentBalance - double.parse(dd["expense"]);
+
+      // Update the budget balance
+      transaction.update(budgetRef, {'balance': newBalance});
+    }).then((_) {
+      print('Transaction successfully completed');
+    }).catchError((error) {
+      print('Failed to complete transaction: $error');
+    });
+  }
+
+  Future<double> getBalance(String uid) async {
+    QuerySnapshot querySnapshot = await _db
+        .collection('/${uid}/master/budget')
+        .where("year", isEqualTo: DateTime.now().year)
+        .where("month", isEqualTo: monthMapInverse[DateTime.now().month])
+        .get();
+    if (querySnapshot.docs.isNotEmpty) {
+      return querySnapshot.docs.first.get("balance");
+    } else {
+      throw Exception(
+          "No budget document found for the specified month and year");
+    }
+  }
 }
+
+Map<int, String> monthMapInverse = {
+  1: 'January',
+  2: 'February',
+  3: 'March',
+  4: 'April',
+  5: 'May',
+  6: 'June',
+  7: 'July',
+  8: 'August',
+  9: 'September',
+  10: 'October',
+  11: 'November',
+  12: 'December',
+};
