@@ -236,24 +236,30 @@ class _HomeViewState extends State<HomeView> {
                         ),
                       ),
                       Expanded(
-                        child: Container(
-                          child: Column(
-                            children: [
-                              Container(
-                                decoration: BoxDecoration(
-                                    color: context.colors.primary,
-                                    shape: BoxShape.circle),
-                                child: Icon(
-                                  SolarIconsBold.file,
-                                  color: context.colors.primaryContainer,
-                                ).pa(24),
-                              ).pb(8),
-                              Text(
-                                "History",
-                                style: context.textTheme.bodyMedium
-                                    ?.copyWith(fontWeight: FontWeight.w600),
-                              )
-                            ],
+                        child: GestureDetector(
+                          onTap: (){
+                            RouterService.instance
+                                .pushTo(RouterConstant.history);
+                          },
+                          child: SizedBox(
+                            child: Column(
+                              children: [
+                                Container(
+                                  decoration: BoxDecoration(
+                                      color: context.colors.primary,
+                                      shape: BoxShape.circle),
+                                  child: Icon(
+                                    SolarIconsBold.file,
+                                    color: context.colors.primaryContainer,
+                                  ).pa(24),
+                                ).pb(8),
+                                Text(
+                                  "History",
+                                  style: context.textTheme.bodyMedium
+                                      ?.copyWith(fontWeight: FontWeight.w600),
+                                )
+                              ],
+                            ),
                           ),
                         ),
                       ),

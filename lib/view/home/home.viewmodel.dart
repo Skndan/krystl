@@ -109,7 +109,7 @@ class HomeViewModel extends BaseModel with BaseViewModel {
     setState(ViewState.Busy);
     expenses = await _firestoreService.fetchExpensesWithCategory();
     for (var item in expenses) {
-      todayExpense += double.parse(item["expense"]);
+      todayExpense += double.parse(item["expense"].toString());
     }
     notifyListeners();
     setState(ViewState.Idle);

@@ -201,8 +201,9 @@ class _ExpenseFormWidgetState extends State<ExpenseFormWidget> {
                                         "category": model.list[currentPage].id,
                                         "month": model.monthMapInverse[
                                             DateTime.now().month],
-                                        "year": 2024,
-                                        "expense": formVal["expense"],
+                                        "year": DateTime.now().year,
+                                        "expense": double.parse(formVal["expense"]),
+                                        "expenseAt": DateTime.now(),
                                         "createdAt": DateTime.now()
                                       };
                                       //
