@@ -78,6 +78,7 @@ dependencies:
   google_sign_in: ^6.2.1
   cloud_firestore: ^4.17.4
   flutter_colorpicker: ^1.1.0
+  flutter_upi_pay: ^0.0.2
   # Ads
 #  google_mobile_ads: ^4.0.0
 
