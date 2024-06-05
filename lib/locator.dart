@@ -2,7 +2,9 @@ import 'package:get_it/get_it.dart';
 import 'package:krystl/core/network/network_manager.dart';
 import 'package:krystl/view/budget/budget.viewmodel.dart';
 import 'package:krystl/view/category/category.viewmodel.dart';
+import 'package:krystl/view/history/history.viewmodel.dart';
 import 'package:krystl/view/home/home.viewmodel.dart';
+import 'package:krystl/view/upi/upi.viewmodel.dart';
 
 import 'core/network/firebase_manager.dart';
 
@@ -15,6 +17,8 @@ void setupLocator() {
   locator.registerFactory(() => HomeViewModel());
   locator.registerFactory(() => CategoryViewModel());
   locator.registerFactory(() => BudgetViewModel());
+  locator.registerFactory(() => UpiViewModel());
+  locator.registerFactory(() => HistoryViewModel());
   // locator.registerFactory(() => HomeViewModel());
 
   // Dio
