@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:krystl/view/category/category.view.dart';
 
 import '../../view/budget/budget.view.dart';
+import '../../view/history/history.view.dart';
 import '../../view/home/home.view.dart';
 import '../../view/splash.view.dart';
 import '../../view/upi/upi.view.dart';
@@ -39,6 +40,8 @@ class RouterGenerator {
         return navigate(const BudgetView(), settings);
       case RouterConstant.upi:
         return navigate(const UpiView(), settings);
+      case RouterConstant.history:
+        return navigate(const HistoryView(), settings);
       default:
         return MaterialPageRoute(
           builder: (context) => const NotFoundNavigationWidget(),

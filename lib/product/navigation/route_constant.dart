@@ -3,5 +3,6 @@ class RouterConstant {
   static const home = '/home';
   static const category = '/category';
   static const budget = '/budget';
+  static const history = '/history';
   static const upi = '/upi';
 }
