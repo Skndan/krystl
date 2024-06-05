@@ -71,7 +71,17 @@ class BudgetViewModel extends BaseModel with BaseViewModel {
     if (now.year == year && now.month == givenMonth) {
       return context.colors.primaryContainer;
     } else {
-      return context.colors.secondary;
+      return context.colors.primaryContainer.withOpacity(0.2);
     }
   }
+
+  Color checkYearText(month, year) {
+    int? givenMonth = monthMap[month];
+    if (now.year == year && now.month == givenMonth) {
+      return context.colors.onSecondary;
+    } else {
+      return context.colors.primary;
+    }
+  }
+
 }

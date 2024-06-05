@@ -108,7 +108,7 @@ class _BudgetViewState extends State<BudgetView> with TickerProviderStateMixin {
                   // }
                   return ListView.separated(
                     itemCount: documents.length,
-                    padding: EdgeInsets.symmetric(horizontal: 16),
+                    padding: const EdgeInsets.symmetric(horizontal: 16),
                     itemBuilder: (BuildContext context, int index) {
                       return InkWell(
                         onTap: () {
@@ -131,12 +131,14 @@ class _BudgetViewState extends State<BudgetView> with TickerProviderStateMixin {
                               Text(
                                 "Your budget for ${documents[index]["month"]}",
                                 style: context.textTheme.titleLarge?.copyWith(
-                                    color: context.colors.onPrimaryContainer),
+                                    color: model.checkYearText(documents[index]["month"],
+                                        documents[index]["year"])),
                               ).pb(24),
                               Text(
                                 "\$${documents[index]["budget"]}",
                                 style: context.textTheme.displaySmall?.copyWith(
-                                    color: context.colors.onPrimaryContainer,
+                                    color: model.checkYearText(documents[index]["month"],
+                                        documents[index]["year"]),
                                     fontWeight: FontWeight.w700),
                               ),
                             ],

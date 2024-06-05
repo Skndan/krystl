@@ -127,9 +127,9 @@ class _BudgetFormWidgetState extends State<BudgetFormWidget> {
 
                         var dd = {
                           "month": formVal["month"],
-                          "year": 2024,
-                          "budget": formVal["budget"],
-                          "balance": formVal["budget"],
+                          "year": DateTime.now().year,
+                          "budget": double.parse(formVal["budget"]),
+                          "balance": double.parse(formVal["budget"]),
                           "createdAt": DateTime.now()
                         };
                         //
