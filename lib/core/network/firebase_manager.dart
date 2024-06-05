@@ -1,6 +1,8 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 
+import '../../view/history/expense.model.dart';
+
 /// Created by Balaji Malathi on 5/25/2024 at 18:24.
 
 class FirestoreService {
@@ -173,11 +175,42 @@ class FirestoreService {
         .where("month", isEqualTo: monthMapInverse[DateTime.now().month])
         .get();
     if (querySnapshot.docs.isNotEmpty) {
-      return querySnapshot.docs.first.get("balance");
+      return double.parse(querySnapshot.docs.first.get("balance").toString());
     } else {
       throw Exception(
           "No budget document found for the specified month and year");
     }
+  }
+
+  Future<List<Expense>> getExpenses(String uid) async {
+
+    QuerySnapshot expensesSnapshot = await _db
+        .collection(
+            '/${FirebaseAuth.instance.currentUser?.uid}/expense/${DateTime.now().year}')
+        .orderBy("createdAt", descending: true)
+        .get();
+    List<Expense> expenses = [];
+
+    for (var expenseDoc in expensesSnapshot.docs) {
+      var expenseData = expenseDoc.data() as Map<String, dynamic>;
+      String categoryId = expenseData['category'];
+      DocumentSnapshot categoryDoc = await _db
+          .collection(
+              '/${FirebaseAuth.instance.currentUser?.uid}/master/category')
+          .doc(categoryId)
+          .get();
+      var categoryData = categoryDoc.data() as Map<String, dynamic>;
+
+      expenses.add(Expense(
+          expense: expenseData['expense'],
+          category: Category(
+              name: categoryData['name'],
+              icon: categoryData['icon'],
+              color: categoryData['color']),
+          createdAt: (expenseData['createdAt'] as Timestamp).toDate()));
+    }
+
+    return expenses;
   }
 }
 

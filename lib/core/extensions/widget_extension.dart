@@ -1,4 +1,6 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
+import 'package:intl/intl.dart';
 
 extension WidgetExtension on Widget {
   Widget get toSliver {
@@ -58,4 +60,19 @@ extension ListDivideExt<T extends Widget> on Iterable<T> {
   List<Padding> paddingTopEach(double val) =>
       map((w) => Padding(padding: EdgeInsets.only(top: val), child: w))
           .toList();
+}
+
+extension TimestampExtension on Timestamp {
+  String toFormattedString() {
+    final DateTime dateTime = this.toDate();
+    final DateFormat formatter = DateFormat('EEE, dd MMM yy hh:mm a');
+    return formatter.format(dateTime);
+  }
+}
+
+extension DateTimeExtension on DateTime {
+  String toFormattedString() {
+    final DateFormat formatter = DateFormat('EEE, dd MMM yy hh:mm a');
+    return formatter.format(this);
+  }
 }
