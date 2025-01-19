@@ -26,14 +26,13 @@ class CategoryFormWidget extends StatefulWidget {
 }
 
 class _CategoryFormWidgetState extends State<CategoryFormWidget> {
-  FirestoreService _firestoreService = FirestoreService.instance;
+  final FirestoreService _firestoreService = FirestoreService.instance;
 
   IconData iconPicked = Icons.shape_line_rounded;
   Color iconPickedColor = Colors.amber;
 
   @override
   void initState() {
-    print(widget.initialValue["icon"]);
     iconPickedColor = Color(widget.initialValue["color"] ?? 0xFFFFB300);
     iconPicked = IconData(widget.initialValue["icon"] ?? 0xf04b6,
         fontFamily: "MaterialIcons");
@@ -44,8 +43,8 @@ class _CategoryFormWidgetState extends State<CategoryFormWidget> {
     var iconPicked = await showDialog(
       context: context,
       builder: (BuildContext context) {
-        return AlertDialog(
-          title: const Text(
+        return const AlertDialog(
+          title: Text(
             'Pick an icon',
             style: TextStyle(fontWeight: FontWeight.bold),
           ),
@@ -191,12 +190,14 @@ class _CategoryFormWidgetState extends State<CategoryFormWidget> {
 }
 
 class IconPicker extends StatefulWidget {
+  const IconPicker({super.key});
+
   @override
   State<IconPicker> createState() => _IconPickerState();
 }
 
 class _IconPickerState extends State<IconPicker> {
-  Color pickerColor = Color(0xffffc100);
+  Color pickerColor = const Color(0xffffc100);
 
   List<IconData> icons = [
     Icons.restaurant,

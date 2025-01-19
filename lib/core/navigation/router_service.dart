@@ -22,23 +22,27 @@ class RouterService implements RouterInterface {
 
   @override
   Future<dynamic> pushTo(String path, {Object? data}) async {
+    debugPrint("Navigating to => $path");
     await navigatorKey.currentState?.pushNamed(path, arguments: data);
   }
 
   @override
   Future<dynamic> pushAndReplace(String path, {Object? data}) async {
+    debugPrint("Navigating to => $path");
     await navigatorKey.currentState
         ?.pushReplacementNamed(path, arguments: data);
   }
 
   @override
   Future<void> pushAndClear(String path, {Object? data}) async {
+    debugPrint("Navigating to => $path");
     await navigatorKey.currentState
         ?.pushNamedAndRemoveUntil(path, (Route<dynamic> route) => false, arguments: data);
   }
 
   @override
   Future<void>? popAndReplace(String path, {Object? data}) async {
+    debugPrint("Navigating to => $path");
     await navigatorKey.currentState?.popAndPushNamed(path, arguments: data);
   }
 }

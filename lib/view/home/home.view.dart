@@ -71,25 +71,31 @@ class _HomeViewState extends State<HomeView> {
             ),
           ],
         ),
-        floatingActionButton: FloatingActionButton.large(
-          onPressed: () async {
-            RouterService.instance.pushAndClear(RouterConstant.upi);
-          },
-        ),
+        // floatingActionButton: FloatingActionButton.large(
+        //   onPressed: () async {
+        //     RouterService.instance.pushAndClear(RouterConstant.upi);
+        //   },
+        // ),
         floatingActionButtonLocation: FloatingActionButtonLocation.centerFloat,
         body: SingleChildScrollView(
-          padding: EdgeInsets.only(bottom: 100),
+          padding: const EdgeInsets.only(bottom: 200),
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  Text(
-                    "${FirebaseAuth.instance.currentUser?.displayName}",
-                    style: context.textTheme.headlineLarge
-                        ?.copyWith(fontWeight: FontWeight.w700),
-                  ).pt(16),
+                  Row(
+                    children: [
+                      Expanded(
+                        child: Text(
+                          "Hi, ${FirebaseAuth.instance.currentUser?.displayName}",
+                          style: context.textTheme.headlineLarge
+                              ?.copyWith(fontWeight: FontWeight.w700),
+                        ).pt(16),
+                      ),
+                    ],
+                  ),
                   Container(
                     height: 105,
                     decoration: BoxDecoration(
@@ -102,7 +108,7 @@ class _HomeViewState extends State<HomeView> {
                           crossAxisAlignment: CrossAxisAlignment.start,
                           mainAxisAlignment: MainAxisAlignment.spaceBetween,
                           children: [
-                            Text("Your Balance",
+                            Text("Your Mileage",
                                 style: context.textTheme.titleMedium?.copyWith(
                                     color: context.colors.onPrimaryContainer)),
                             AnimatedFlipCounter(

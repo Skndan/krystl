@@ -92,7 +92,7 @@ class _BudgetViewState extends State<BudgetView> with TickerProviderStateMixin {
             },
             body: StreamBuilder(
               stream: FirestoreService.instance
-                  .listenToCollection('/${model.uid}/master/budget'),
+                  .listenToCollection('/${model.uid}/budget/2025'),
               builder: (context, snapshot) {
                 if (snapshot.connectionState == ConnectionState.waiting) {
                   // If the connection is still waiting, show a loading indicator
@@ -146,7 +146,7 @@ class _BudgetViewState extends State<BudgetView> with TickerProviderStateMixin {
                         ),
                       );
                     },
-                    separatorBuilder: (context, index) => SizedBox(height: 16,),
+                    separatorBuilder: (context, index) => const SizedBox(height: 16,),
                   );
                 } else {
                   return const Text('No data available');

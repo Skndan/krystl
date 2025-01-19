@@ -97,7 +97,7 @@ SizeConfig
 */
 
 class MarkApp extends StatefulWidget {
-  const MarkApp({Key? key}) : super(key: key);
+  const MarkApp({super.key});
 
   @override
   State<MarkApp> createState() => _MarkAppState();

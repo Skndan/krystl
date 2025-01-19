@@ -1,5 +1,6 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:flutter/material.dart';
 
 import '../../view/history/expense.model.dart';
 
@@ -13,11 +14,15 @@ class FirestoreService {
 
   final FirebaseFirestore _db = FirebaseFirestore.instance;
 
+  int _getYear() {
+    return DateTime.now().year;
+  }
+
   Future<void> insert(String collectionPath, Map<String, dynamic> data) async {
     try {
       await _db.collection(collectionPath).add(data);
     } catch (e) {
-      print("Error inserting document: $e");
+      debugPrint("Error inserting document: $e");
     }
   }
 
@@ -26,7 +31,7 @@ class FirestoreService {
     try {
       await _db.collection(collectionPath).doc(documentId).update(data);
     } catch (e) {
-      print("Error updating document: $e");
+      debugPrint("Error updating document: $e");
     }
   }
 
@@ -37,7 +42,7 @@ class FirestoreService {
           await _db.collection(collectionPath).doc(documentId).get();
       return doc;
     } catch (e) {
-      print("Error fetching document: $e");
+      debugPrint("Error fetching document: $e");
       rethrow;
     }
   }
@@ -46,7 +51,7 @@ class FirestoreService {
     try {
       await _db.collection(collectionPath).doc(documentId).delete();
     } catch (e) {
-      print("Error deleting document: $e");
+      debugPrint("Error deleting document: $e");
     }
   }
 
@@ -61,7 +66,7 @@ class FirestoreService {
         await _db.collection(collectionPath).doc(documentId).set(data);
       }
     } catch (e) {
-      print("Error inserting or updating document: $e");
+      debugPrint("Error inserting or updating document: $e");
     }
   }
 
@@ -71,7 +76,7 @@ class FirestoreService {
       QuerySnapshot querySnapshot = await _db.collection(collectionPath).get();
       return querySnapshot.docs;
     } catch (e) {
-      print("Error fetching collection: $e");
+      debugPrint("Error fetching collection: $e");
       rethrow;
     }
   }
@@ -79,14 +84,14 @@ class FirestoreService {
   Future<List<Map<String, dynamic>>> fetchExpensesWithCategory() async {
     DateTime now = DateTime.now();
     DateTime startOfDay = DateTime(now.year, now.month, now.day);
-    DateTime startOfNextDay = startOfDay.add(Duration(days: 1));
-
+    DateTime startOfNextDay = startOfDay.add(const Duration(days: 1));
+    int year = now.year;
     Timestamp startOfDayTimestamp = Timestamp.fromDate(startOfDay);
     Timestamp startOfNextDayTimestamp = Timestamp.fromDate(startOfNextDay);
 
     try {
       QuerySnapshot expensesSnapshot = await _db
-          .collection('/${FirebaseAuth.instance.currentUser?.uid}/expense/2024')
+          .collection('/${FirebaseAuth.instance.currentUser?.uid}/expense/$year')
           .where('createdAt', isGreaterThanOrEqualTo: startOfDayTimestamp)
           .where('createdAt', isLessThan: startOfNextDayTimestamp)
           .orderBy("createdAt", descending: true)
@@ -116,7 +121,7 @@ class FirestoreService {
 
       return expenses;
     } catch (e) {
-      print("Error fetching expenses with category: $e");
+      debugPrint("Error fetching expenses with category: $e");
       rethrow;
     }
   }
@@ -134,7 +139,7 @@ class FirestoreService {
 //DocumentReference
     String budgetDocId = "";
     QuerySnapshot querySnapshot = await _db
-        .collection('/${uid}/master/budget')
+        .collection('/$uid/budget/${_getYear()}')
         .where("year", isEqualTo: DateTime.now().year)
         .where("month", isEqualTo: monthMapInverse[DateTime.now().month])
         .get();
@@ -146,7 +151,7 @@ class FirestoreService {
           "No budget document found for the specified month and year");
     }
 
-    final budgetRef = _db.collection('/$uid/master/budget').doc(budgetDocId);
+    final budgetRef = _db.collection('/$uid/budget/${_getYear()}').doc(budgetDocId);
 
     await _db.runTransaction((transaction) async {
       // Get the budget document
@@ -157,20 +162,20 @@ class FirestoreService {
 
       // Calculate the new balance
       double currentBalance = budgetSnapshot['balance'].toDouble();
-      double newBalance = currentBalance - double.parse(dd["expense"]);
+      double newBalance = currentBalance - double.parse(dd["expense"].toString());
 
       // Update the budget balance
       transaction.update(budgetRef, {'balance': newBalance});
     }).then((_) {
-      print('Transaction successfully completed');
+      debugPrint('Transaction successfully completed');
     }).catchError((error) {
-      print('Failed to complete transaction: $error');
+      debugPrint('Failed to complete transaction: $error');
     });
   }
 
   Future<double> getBalance(String uid) async {
     QuerySnapshot querySnapshot = await _db
-        .collection('/${uid}/master/budget')
+        .collection('/$uid/budget/${_getYear()}')
         .where("year", isEqualTo: DateTime.now().year)
         .where("month", isEqualTo: monthMapInverse[DateTime.now().month])
         .get();
@@ -189,6 +194,7 @@ class FirestoreService {
             '/${FirebaseAuth.instance.currentUser?.uid}/expense/${DateTime.now().year}')
         .orderBy("createdAt", descending: true)
         .get();
+
     List<Expense> expenses = [];
 
     for (var expenseDoc in expensesSnapshot.docs) {
@@ -202,7 +208,7 @@ class FirestoreService {
       var categoryData = categoryDoc.data() as Map<String, dynamic>;
 
       expenses.add(Expense(
-          expense: expenseData['expense'],
+          expense: double.parse(expenseData['expense'].toString()),
           category: Category(
               name: categoryData['name'],
               icon: categoryData['icon'],

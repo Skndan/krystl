@@ -15,9 +15,9 @@ import '../../core/enums/view_state.dart';
 import '../../core/network/firebase_manager.dart';
 
 /// Created by Balaji Malathi on 5/25/2024 at 22:06.
-const SCALE_FRACTION = 0.7;
-const FULL_SCALE = 1.0;
-const PAGER_HEIGHT = 150.0;
+const scaleFraction = 0.7;
+const fullScale = 1.0;
+const pageHeight = 150.0;
 
 class ExpenseFormWidget extends StatefulWidget {
   final GlobalKey<FormBuilderState> formKey;
@@ -89,13 +89,12 @@ class _ExpenseFormWidgetState extends State<ExpenseFormWidget> {
                 ),
                 BaseView<HomeViewModel>(
                   onModelReady: (HomeViewModel model) {
-                    //model.setContext(context);
+                    model.setContext(context);
                     model.init();
-                    model.getCategory();
-                    model.getBalance();
+                    model.initHome();
                   },
                   builder: (context, model, child) => model.state ==
-                          ViewState.Busy
+                          ViewState.busy
                       ? const Center(
                           child: CircularProgressIndicator(),
                         )
@@ -105,7 +104,7 @@ class _ExpenseFormWidgetState extends State<ExpenseFormWidget> {
                               return Column(
                                 children: [
                                   SizedBox(
-                                    height: PAGER_HEIGHT,
+                                    height: pageHeight,
                                     child: NotificationListener<
                                         ScrollNotification>(
                                       onNotification:
@@ -129,8 +128,8 @@ class _ExpenseFormWidgetState extends State<ExpenseFormWidget> {
                                         itemCount: model.list.length,
                                         itemBuilder: (context, index) {
                                           final scale = max(
-                                              SCALE_FRACTION,
-                                              (FULL_SCALE -
+                                              scaleFraction,
+                                              (fullScale -
                                                       (index - page).abs()) +
                                                   viewPortFraction);
                                           return circleOffer(
@@ -141,7 +140,7 @@ class _ExpenseFormWidgetState extends State<ExpenseFormWidget> {
                                   ),
                                   Center(
                                     child: Text(
-                                      model.list[currentPage]['name']!,
+                                      model.list[currentPage]['name'] ?? '',
                                       textAlign: TextAlign.center,
                                       style: context.textTheme.titleLarge
                                           ?.copyWith(
@@ -202,15 +201,17 @@ class _ExpenseFormWidgetState extends State<ExpenseFormWidget> {
                                         "month": model.monthMapInverse[
                                             DateTime.now().month],
                                         "year": DateTime.now().year,
-                                        "expense": double.parse(formVal["expense"]),
+                                        "expense":
+                                            double.parse(formVal["expense"]),
                                         "expenseAt": DateTime.now(),
                                         "createdAt": DateTime.now()
                                       };
+                                      int year = DateTime.now().year;
                                       //
                                       if (widget.initialValue["id"] != null) {
                                         await _firestoreService
                                             .update(
-                                                '/${FirebaseAuth.instance.currentUser?.uid}/expense/2024',
+                                                '/${FirebaseAuth.instance.currentUser?.uid}/expense/$year',
                                                 widget.initialValue["id"],
                                                 dd)
                                             .then((s) {
@@ -219,7 +220,7 @@ class _ExpenseFormWidgetState extends State<ExpenseFormWidget> {
                                       } else {
                                         await _firestoreService
                                             .insert(
-                                                '/${FirebaseAuth.instance.currentUser?.uid}/expense/2024',
+                                                '/${FirebaseAuth.instance.currentUser?.uid}/expense/$year',
                                                 dd)
                                             .then((s) async {
                                           await _firestoreService
@@ -272,20 +273,21 @@ class _ExpenseFormWidgetState extends State<ExpenseFormWidget> {
                                       //     ?.unfocus();
                                       var formVal =
                                           widget.formKey.currentState!.value;
-
+                                      int year = DateTime.now().year;
                                       var dd = {
                                         "category": model.list[currentPage].id,
                                         "month": model.monthMapInverse[
                                             DateTime.now().month],
-                                        "year": 2024,
+                                        "year": year,
                                         "expense": formVal["expense"],
                                         "createdAt": DateTime.now()
                                       };
+
                                       //
                                       if (widget.initialValue["id"] != null) {
                                         await _firestoreService
                                             .update(
-                                                '/${FirebaseAuth.instance.currentUser?.uid}/expense/2024',
+                                                '/${FirebaseAuth.instance.currentUser?.uid}/expense/$year',
                                                 widget.initialValue["id"],
                                                 dd)
                                             .then((s) {
@@ -295,7 +297,7 @@ class _ExpenseFormWidgetState extends State<ExpenseFormWidget> {
                                       } else {
                                         await _firestoreService
                                             .insert(
-                                                '/${FirebaseAuth.instance.currentUser?.uid}/expense/2024',
+                                                '/${FirebaseAuth.instance.currentUser?.uid}/expense/$year',
                                                 dd)
                                             .then((s) {
                                           textSecondFocusNode.requestFocus();
@@ -351,8 +353,8 @@ class _ExpenseFormWidgetState extends State<ExpenseFormWidget> {
       alignment: Alignment.bottomCenter,
       child: Container(
         margin: const EdgeInsets.only(bottom: 10),
-        height: PAGER_HEIGHT * scale,
-        width: PAGER_HEIGHT * scale,
+        height: pageHeight * scale,
+        width: pageHeight * scale,
         decoration: BoxDecoration(
             color: Color(item["color"]).withOpacity(0.2),
             shape: BoxShape.circle),

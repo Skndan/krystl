@@ -97,27 +97,24 @@ class HomeViewModel extends BaseModel with BaseViewModel {
   List<Map<String, dynamic>> expenses = [];
 
   Future getCategory() async {
-    setState(ViewState.Busy);
     list = await _firestoreService.fetchCollection(
         "/${FirebaseAuth.instance.currentUser?.uid}/master/category");
     notifyListeners();
-    setState(ViewState.Idle);
   }
 
   Future getExpenses() async {
     todayExpense = 0.0;
-    setState(ViewState.Busy);
+    setState(ViewState.busy);
     expenses = await _firestoreService.fetchExpensesWithCategory();
     for (var item in expenses) {
       todayExpense += double.parse(item["expense"].toString());
     }
-    notifyListeners();
-    setState(ViewState.Idle);
+    setState(ViewState.idle);
   }
 
   Future getBalance() async {
     balance = 0;
-    setState(ViewState.Busy);
+
     balance = await _firestoreService.getBalance(uid);
 
     int daysRemaining = getRemainingDaysInMonth() + 5;
@@ -125,7 +122,6 @@ class HomeViewModel extends BaseModel with BaseViewModel {
     // get remaining days
     dailyFuel = balance / daysRemaining.toDouble();
     notifyListeners();
-    setState(ViewState.Idle);
   }
 
   int getRemainingDaysInMonth() {
@@ -138,12 +134,22 @@ class HomeViewModel extends BaseModel with BaseViewModel {
         (month < 12) ? DateTime(year, month + 1, 1) : DateTime(year + 1, 1, 1);
 
     // Last day of the current month is one day before the first day of the next month
-    DateTime lastDayOfMonth = firstDayOfNextMonth.subtract(Duration(days: 1));
+    DateTime lastDayOfMonth =
+        firstDayOfNextMonth.subtract(const Duration(days: 1));
 
     // Calculate the remaining days
     int remainingDays =
         lastDayOfMonth.difference(now).inDays + 1; // +1 to include today
 
     return remainingDays;
+  }
+
+  Future initHome() async {
+    setState(ViewState.busy);
+    await Future.wait([
+      getCategory(),
+      getBalance(),
+    ]);
+    setState(ViewState.idle);
   }
 }

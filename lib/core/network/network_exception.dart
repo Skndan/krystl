@@ -9,22 +9,22 @@ mixin class ApiBaseHelper {
     if (e is Exception) {
       try {
         String networkExceptions = "";
-        if (e is DioError) {
+        if (e is DioException) {
           switch (e.type) {
-            case DioErrorType.cancel:
+            case DioExceptionType.cancel:
               networkExceptions = "Request Cancelled";
               break;
-            case DioErrorType.connectionTimeout:
+            case DioExceptionType.connectionTimeout:
               networkExceptions = "Connection request timeout";
               break;
-            case DioErrorType.unknown:
+            case DioExceptionType.unknown:
               networkExceptions =
                   "This action could not be performed right now";
               break;
-            case DioErrorType.receiveTimeout:
+            case DioExceptionType.receiveTimeout:
               networkExceptions = "Send timeout in connection with API server";
               break;
-            case DioErrorType.badResponse:
+            case DioExceptionType.badResponse:
               switch (e.response?.statusCode) {
                 case 400:
                   networkExceptions = "This action could not be performed";
@@ -56,13 +56,13 @@ mixin class ApiBaseHelper {
                       "Received invalid status code: $responseCode";
               }
               break;
-            case DioErrorType.sendTimeout:
+            case DioExceptionType.sendTimeout:
               networkExceptions = "Send timeout in connection with API server";
               break;
-            case DioErrorType.badCertificate:
+            case DioExceptionType.badCertificate:
               // TODO: Handle this case.
               break;
-            case DioErrorType.connectionError:
+            case DioExceptionType.connectionError:
               // TODO: Handle this case.
               break;
           }

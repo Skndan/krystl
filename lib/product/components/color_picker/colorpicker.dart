@@ -11,7 +11,7 @@ import 'utils.dart';
 /// The default layout of Color Picker.
 class ColorPicker extends StatefulWidget {
   const ColorPicker({
-    Key? key,
+    super.key,
     required this.pickerColor,
     required this.onColorChanged,
     this.pickerHsvColor,
@@ -30,7 +30,7 @@ class ColorPicker extends StatefulWidget {
     this.hexInputController,
     this.colorHistory,
     this.onHistoryChanged,
-  }) : super(key: key);
+  });
 
   final Color pickerColor;
   final ValueChanged<Color> onColorChanged;
@@ -445,7 +445,7 @@ class _ColorPickerState extends State<ColorPicker> {
 /// The Color Picker with sliders only. Support HSV, HSL and RGB color model.
 class SlidePicker extends StatefulWidget {
   const SlidePicker({
-    Key? key,
+    super.key,
     required this.pickerColor,
     required this.onColorChanged,
     this.colorModel = ColorModel.rgb,
@@ -463,7 +463,7 @@ class SlidePicker extends StatefulWidget {
     this.indicatorAlignmentEnd = const Alignment(1.0, 3.0),
     this.displayThumbColor = true,
     this.indicatorBorderRadius = const BorderRadius.all(Radius.zero),
-  }) : super(key: key);
+  });
 
   final Color pickerColor;
   final ValueChanged<Color> onColorChanged;
@@ -645,7 +645,7 @@ class _SlidePickerState extends State<SlidePicker> {
 /// The Color Picker with HUE Ring & HSV model.
 class HueRingPicker extends StatefulWidget {
   const HueRingPicker({
-    Key? key,
+    super.key,
     required this.pickerColor,
     required this.onColorChanged,
     this.portraitOnly = false,
@@ -654,7 +654,7 @@ class HueRingPicker extends StatefulWidget {
     this.enableAlpha = false,
     this.displayThumbColor = true,
     this.pickerAreaBorderRadius = const BorderRadius.all(Radius.zero),
-  }) : super(key: key);
+  });
 
   final Color pickerColor;
   final ValueChanged<Color> onColorChanged;

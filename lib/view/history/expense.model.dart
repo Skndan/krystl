@@ -1,7 +1,7 @@
 import 'dart:convert';
 
 class Expense {
-  int expense;
+  double expense;
   Category category;
   DateTime createdAt;
   DateTime? expenseAt;

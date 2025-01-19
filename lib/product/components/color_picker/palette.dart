@@ -812,12 +812,11 @@ class CheckerPainter extends CustomPainter {
 class ColorPickerLabel extends StatefulWidget {
   const ColorPickerLabel(
     this.hsvColor, {
-    Key? key,
+    super.key,
     this.enableAlpha = true,
     this.colorLabelTypes = const [ColorLabelType.rgb, ColorLabelType.hsv, ColorLabelType.hsl],
     this.textStyle,
-  })  : assert(colorLabelTypes.length > 0),
-        super(key: key);
+  })  : assert(colorLabelTypes.length > 0);
 
   final HSVColor hsvColor;
   final bool enableAlpha;
@@ -942,11 +941,11 @@ class ColorPickerInput extends StatefulWidget {
   const ColorPickerInput(
     this.color,
     this.onColorChanged, {
-    Key? key,
+    super.key,
     this.enableAlpha = true,
     this.embeddedText = false,
     this.disable = false,
-  }) : super(key: key);
+  });
 
   final Color color;
   final ValueChanged<Color> onColorChanged;
@@ -1021,10 +1020,10 @@ class ColorPickerSlider extends StatelessWidget {
     this.trackType,
     this.hsvColor,
     this.onColorChanged, {
-    Key? key,
+    super.key,
     this.displayThumbColor = false,
     this.fullThumbColor = false,
-  }) : super(key: key);
+  });
 
   final TrackType trackType;
   final HSVColor hsvColor;
@@ -1162,10 +1161,10 @@ class ColorPickerSlider extends StatelessWidget {
 class ColorIndicator extends StatelessWidget {
   const ColorIndicator(
     this.hsvColor, {
-    Key? key,
+    super.key,
     this.width = 50.0,
     this.height = 50.0,
-  }) : super(key: key);
+  });
 
   final HSVColor hsvColor;
   final double width;
@@ -1194,8 +1193,8 @@ class ColorPickerArea extends StatelessWidget {
     this.hsvColor,
     this.onColorChanged,
     this.paletteType, {
-    Key? key,
-  }) : super(key: key);
+    super.key,
+  });
 
   final HSVColor hsvColor;
   final ValueChanged<HSVColor> onColorChanged;
@@ -1331,10 +1330,10 @@ class ColorPickerHueRing extends StatelessWidget {
   const ColorPickerHueRing(
     this.hsvColor,
     this.onColorChanged, {
-    Key? key,
+    super.key,
     this.displayThumbColor = true,
     this.strokeWidth = 5.0,
-  }) : super(key: key);
+  });
 
   final HSVColor hsvColor;
   final ValueChanged<HSVColor> onColorChanged;

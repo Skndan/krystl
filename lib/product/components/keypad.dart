@@ -33,7 +33,7 @@ class _KeypadState extends State<Keypad> {
         padding: const EdgeInsets.all(4.0),
         child: ElevatedButton(
           onPressed: () => _onKeyPress(key),
-          child: Text(key, style: TextStyle(fontSize: 24)),
+          child: Text(key, style: const TextStyle(fontSize: 24)),
         ),
       ),
     );
@@ -44,8 +44,8 @@ class _KeypadState extends State<Keypad> {
     return Column(
       mainAxisAlignment: MainAxisAlignment.center,
       children: <Widget>[
-        Text(_input, style: TextStyle(fontSize: 32, fontWeight: FontWeight.bold)),
-        SizedBox(height: 20),
+        Text(_input, style: const TextStyle(fontSize: 32, fontWeight: FontWeight.bold)),
+        const SizedBox(height: 20),
         _buildKeypad(),
       ],
     );

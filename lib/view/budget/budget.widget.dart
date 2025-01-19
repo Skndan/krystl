@@ -26,7 +26,7 @@ class BudgetFormWidget extends StatefulWidget {
 
 class _BudgetFormWidgetState extends State<BudgetFormWidget> {
   DateTime currentDate = DateTime.now();
-  FirestoreService _firestoreService = FirestoreService.instance;
+  final FirestoreService _firestoreService = FirestoreService.instance;
   @override
   Widget build(BuildContext context) {
     return Padding(
@@ -106,7 +106,7 @@ class _BudgetFormWidgetState extends State<BudgetFormWidget> {
                             FilteringTextInputFormatter.digitsOnly
                           ],
                         ),
-                      ].divide(SizedBox(height: 16,)),
+                      ].divide(const SizedBox(height: 16,)),
                     ),
                   ),
                   ElevatedButton(
@@ -136,7 +136,7 @@ class _BudgetFormWidgetState extends State<BudgetFormWidget> {
                         if (widget.initialValue["id"] != null) {
                           await _firestoreService
                               .update(
-                                  '/${FirebaseAuth.instance.currentUser?.uid}/master/budget',
+                                  '/${FirebaseAuth.instance.currentUser?.uid}/budget/${DateTime.now().year}',
                                   widget.initialValue["id"],
                                   dd)
                               .then((s) {
@@ -145,7 +145,7 @@ class _BudgetFormWidgetState extends State<BudgetFormWidget> {
                         } else {
                           await _firestoreService
                               .insert(
-                                  '/${FirebaseAuth.instance.currentUser?.uid}/master/budget',
+                                  '/${FirebaseAuth.instance.currentUser?.uid}/budget/${DateTime.now().year}',
                                   dd)
                               .then((s) {
                             Navigator.pop(context);
@@ -174,19 +174,18 @@ class _BudgetFormWidgetState extends State<BudgetFormWidget> {
 }
 
 class MonthPicker extends StatefulWidget {
-  MonthPicker(
+  const MonthPicker(
       {required this.initialYear,
       required this.startYear,
       required this.endYear,
       this.currentYear,
       required this.month,
-      Key? key})
-      : super(key: key);
-  late int initialYear;
-  late int startYear;
-  late int endYear;
-  late int? currentYear;
-  late int month;
+      super.key});
+  final int initialYear;
+  final int startYear;
+  final int endYear;
+  final int? currentYear;
+  final int month;
 
   @override
   State<MonthPicker> createState() => _MonthPickerState();
@@ -207,7 +206,7 @@ class _MonthPickerState extends State<MonthPicker> {
     "November",
     "December"
   ];
-  List<String> _yearList = [];
+  final List<String> _yearList = [];
   late int selectedMonthIndex;
   late int selectedYearIndex;
   String selectedMonth = "";

@@ -31,7 +31,7 @@ class LoadingButton extends ButtonStyleButton {
     FocusNode? focusNode,
     bool? autofocus,
     Clip? clipBehavior,
-    MaterialStatesController? statesController,
+    WidgetStatesController? statesController,
     required Widget loading,
     required Widget child,
   }) = _UIButtonWithIcon;
@@ -73,29 +73,29 @@ class LoadingButton extends ButtonStyleButton {
     final Color? background = backgroundColor ?? primary;
     final Color? disabledBackground =
         disabledBackgroundColor ?? onSurface?.withOpacity(0.12);
-    final MaterialStateProperty<Color?>? backgroundColorProp =
+    final WidgetStateProperty<Color?>? backgroundColorProp =
         (background == null && disabledBackground == null)
             ? null
             : _ElevatedButtonDefaultColor(background, disabledBackground);
     final Color? foreground = foregroundColor ?? onPrimary;
     final Color? disabledForeground =
         disabledForegroundColor ?? onSurface?.withOpacity(0.38);
-    final MaterialStateProperty<Color?>? foregroundColorProp =
+    final WidgetStateProperty<Color?>? foregroundColorProp =
         (foreground == null && disabledForeground == null)
             ? null
             : _ElevatedButtonDefaultColor(foreground, disabledForeground);
-    final MaterialStateProperty<Color?>? overlayColor =
+    final WidgetStateProperty<Color?>? overlayColor =
         (foreground == null) ? null : _ElevatedButtonDefaultOverlay(foreground);
-    final MaterialStateProperty<double>? elevationValue =
+    final WidgetStateProperty<double>? elevationValue =
         (elevation == null) ? null : _ElevatedButtonDefaultElevation(elevation);
-    final MaterialStateProperty<MouseCursor?>? mouseCursor =
+    final WidgetStateProperty<MouseCursor?>? mouseCursor =
         (enabledMouseCursor == null && disabledMouseCursor == null)
             ? null
             : _ElevatedButtonDefaultMouseCursor(
                 enabledMouseCursor, disabledMouseCursor);
 
     return ButtonStyle(
-      textStyle: MaterialStatePropertyAll<TextStyle?>(textStyle),
+      textStyle: WidgetStatePropertyAll<TextStyle?>(textStyle),
       backgroundColor: backgroundColorProp,
       foregroundColor: foregroundColorProp,
       overlayColor: overlayColor,
@@ -178,7 +178,7 @@ class LoadingButton extends ButtonStyleButton {
 }
 
 @immutable
-class _ElevatedButtonDefaultColor extends MaterialStateProperty<Color?>
+class _ElevatedButtonDefaultColor extends WidgetStateProperty<Color?>
     with Diagnosticable {
   _ElevatedButtonDefaultColor(this.color, this.disabled);
 
@@ -186,8 +186,8 @@ class _ElevatedButtonDefaultColor extends MaterialStateProperty<Color?>
   final Color? disabled;
 
   @override
-  Color? resolve(Set<MaterialState> states) {
-    if (states.contains(MaterialState.disabled)) {
+  Color? resolve(Set<WidgetState> states) {
+    if (states.contains(WidgetState.disabled)) {
       return disabled;
     }
     return color;
@@ -195,19 +195,19 @@ class _ElevatedButtonDefaultColor extends MaterialStateProperty<Color?>
 }
 
 @immutable
-class _ElevatedButtonDefaultOverlay extends MaterialStateProperty<Color?>
+class _ElevatedButtonDefaultOverlay extends WidgetStateProperty<Color?>
     with Diagnosticable {
   _ElevatedButtonDefaultOverlay(this.overlay);
 
   final Color overlay;
 
   @override
-  Color? resolve(Set<MaterialState> states) {
-    if (states.contains(MaterialState.hovered)) {
+  Color? resolve(Set<WidgetState> states) {
+    if (states.contains(WidgetState.hovered)) {
       return overlay.withOpacity(0.08);
     }
-    if (states.contains(MaterialState.focused) ||
-        states.contains(MaterialState.pressed)) {
+    if (states.contains(WidgetState.focused) ||
+        states.contains(WidgetState.pressed)) {
       return overlay.withOpacity(0.24);
     }
     return null;
@@ -228,15 +228,15 @@ EdgeInsetsGeometry _scaledPadding(BuildContext context) {
 
 @immutable
 class _ElevatedButtonDefaultMouseCursor
-    extends MaterialStateProperty<MouseCursor?> with Diagnosticable {
+    extends WidgetStateProperty<MouseCursor?> with Diagnosticable {
   _ElevatedButtonDefaultMouseCursor(this.enabledCursor, this.disabledCursor);
 
   final MouseCursor? enabledCursor;
   final MouseCursor? disabledCursor;
 
   @override
-  MouseCursor? resolve(Set<MaterialState> states) {
-    if (states.contains(MaterialState.disabled)) {
+  MouseCursor? resolve(Set<WidgetState> states) {
+    if (states.contains(WidgetState.disabled)) {
       return disabledCursor;
     }
     return enabledCursor;
@@ -244,24 +244,24 @@ class _ElevatedButtonDefaultMouseCursor
 }
 
 @immutable
-class _ElevatedButtonDefaultElevation extends MaterialStateProperty<double>
+class _ElevatedButtonDefaultElevation extends WidgetStateProperty<double>
     with Diagnosticable {
   _ElevatedButtonDefaultElevation(this.elevation);
 
   final double elevation;
 
   @override
-  double resolve(Set<MaterialState> states) {
-    if (states.contains(MaterialState.disabled)) {
+  double resolve(Set<WidgetState> states) {
+    if (states.contains(WidgetState.disabled)) {
       return 0;
     }
-    if (states.contains(MaterialState.hovered)) {
+    if (states.contains(WidgetState.hovered)) {
       return elevation + 2;
     }
-    if (states.contains(MaterialState.focused)) {
+    if (states.contains(WidgetState.focused)) {
       return elevation + 2;
     }
-    if (states.contains(MaterialState.pressed)) {
+    if (states.contains(WidgetState.pressed)) {
       return elevation + 6;
     }
     return elevation;
@@ -291,7 +291,7 @@ class _UIButtonWithIcon extends LoadingButton {
   @override
   ButtonStyle? themeStyleOf(BuildContext context) {
     return super.themeStyleOf(context)?.copyWith(
-        padding: MaterialStateProperty.all<EdgeInsets>(
+        padding: WidgetStateProperty.all<EdgeInsets>(
             const EdgeInsets.symmetric(horizontal: 16, vertical: 16)));
   }
 }

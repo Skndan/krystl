@@ -14,13 +14,13 @@ export 'package:krystl/core/enums/view_state.dart';
 /// [BaseModel] extends with ViewModel in the [BaseView]
 ///
 class BaseModel extends ChangeNotifier {
-  ViewState _state = ViewState.Idle;
+  ViewState _state = ViewState.idle;
 
   ViewState get state => _state;
 
   /// [ViewState] is handling the State of the Page
   ///
-  /// [ViewState.Idle] is the default state of the page
+  /// [ViewState.idle] is the default state of the page
   ///
   /// Before calling the the API or async function in order to display content on the
   /// page, use setState to define the state of the page, example,

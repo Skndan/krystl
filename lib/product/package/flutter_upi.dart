@@ -1,7 +1,6 @@
 import 'dart:async';
 /// Created by Balaji Malathi on 5/26/2024 at 22:57.
 
-import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 
 class FlutterUpiApps {
@@ -44,7 +43,7 @@ class FlutterUpiResponse {
 }
 
 class FlutterUpi {
-  static const MethodChannel _channel = const MethodChannel('skndan.com/flutter_upi');
+  static const MethodChannel _channel = MethodChannel('skndan.com/flutter_upi');
   static Future<String> initiateTransaction(
       {required String app,
         required String pa,

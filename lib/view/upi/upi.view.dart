@@ -32,7 +32,6 @@ class _UpiViewState extends State<UpiView> {
         am: "5.00",
         cu: "INR",
         url: "https://www.google.com");
-    print(response);
 
     return response;
   }
@@ -51,9 +50,8 @@ class _UpiViewState extends State<UpiView> {
         child: Column(
           mainAxisSize: MainAxisSize.min,
           children: <Widget>[
-            Text("${value}"),
+            Text(value),
             Keypad(onChanged: (value) {
-              print(value);
               setState(() {
 
                 this.value = value;
@@ -171,12 +169,12 @@ class _UpiViewState extends State<UpiView> {
         child: Column(
           mainAxisSize: MainAxisSize.min,
           children: <Widget>[
-            Divider(
+            const Divider(
               height: 1.0,
               color: Colors.white,
             ),
             FilledButton(
-              child: Text(
+              child: const Text(
                 "Pay Now with Google Pay",
                 style: TextStyle(color: Colors.white),
               ),

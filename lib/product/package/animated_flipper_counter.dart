@@ -1,6 +1,5 @@
 
 import 'dart:math' as math;
-import 'dart:ui' show FontFeature;
 
 import 'package:flutter/widgets.dart';
 
@@ -93,7 +92,7 @@ class AnimatedFlipCounter extends StatelessWidget {
   final EdgeInsets padding;
 
   const AnimatedFlipCounter({
-    Key? key,
+    super.key,
     required this.value,
     this.duration = const Duration(milliseconds: 300),
     this.negativeSignDuration = const Duration(milliseconds: 150),
@@ -110,8 +109,7 @@ class AnimatedFlipCounter extends StatelessWidget {
     this.mainAxisAlignment = MainAxisAlignment.center,
     this.padding = EdgeInsets.zero,
   })  : assert(fractionDigits >= 0, 'fractionDigits must be non-negative'),
-        assert(wholeDigits >= 0, 'wholeDigits must be non-negative'),
-        super(key: key);
+        assert(wholeDigits >= 0, 'wholeDigits must be non-negative');
 
   @override
   Widget build(BuildContext context) {
@@ -262,7 +260,7 @@ class _SingleDigitFlipCounter extends StatelessWidget {
   final bool visible; // user can choose to hide leading zeroes
 
   const _SingleDigitFlipCounter({
-    Key? key,
+    super.key,
     required this.value,
     required this.duration,
     required this.curve,
@@ -270,7 +268,7 @@ class _SingleDigitFlipCounter extends StatelessWidget {
     required this.color,
     required this.padding,
     this.visible = true,
-  }) : super(key: key);
+  });
 
   @override
   Widget build(BuildContext context) {

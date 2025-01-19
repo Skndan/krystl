@@ -4,7 +4,7 @@ import 'package:flutter/material.dart';
 class FieldBuilder extends StatelessWidget {
   final String label;
   final Widget child;
-  const FieldBuilder({Key? key, required this.label, required this.child}) : super(key: key);
+  const FieldBuilder({super.key, required this.label, required this.child});
 
   @override
   Widget build(BuildContext context) {

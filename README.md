@@ -1,7 +1,9 @@
 # krystl
 
 Expense budge tracker
-
+```bash
+C:\src\flutter\bin\flutter.bat --no-color build apk --no-tree-shake-icons
+```
 ## Getting Started
 
 This project is a starting point for a Flutter application.

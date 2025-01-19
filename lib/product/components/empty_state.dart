@@ -10,12 +10,11 @@ class EmptyStateWidget extends StatelessWidget {
   final Widget? action;
 
   const EmptyStateWidget(
-      {Key? key,
+      {super.key,
         required this.asset,
         required this.message,
         this.ratio = 2,
-        this.action})
-      : super(key: key);
+        this.action});
 
   @override
   Widget build(BuildContext context) {

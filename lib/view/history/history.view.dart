@@ -7,7 +7,6 @@ import 'package:krystl/core/extensions/widget_extension.dart';
 import 'package:solar_icons/solar_icons.dart';
 
 import '../../core/base/base_view.dart';
-import '../../core/network/firebase_manager.dart';
 import 'expense.model.dart';
 import 'history.viewmodel.dart';
 
@@ -20,12 +19,11 @@ class HistoryView extends StatefulWidget {
 }
 
 class _HistoryViewState extends State<HistoryView> {
-
   static const _kBasePadding = 8.0;
   static const kExpandedHeight = 140.0;
 
   final ValueNotifier<double> _titlePaddingNotifier =
-  ValueNotifier(_kBasePadding);
+      ValueNotifier(_kBasePadding);
 
   final _scrollController = ScrollController();
 
@@ -84,89 +82,99 @@ class _HistoryViewState extends State<HistoryView> {
     );
   }
 
-
   List<Widget> _buildSlivers(Map<String, List<Expense>> groupedExpenses) {
     final List<Widget> slivers = [];
-    slivers.add(SliverAppBar(
-        expandedHeight: kExpandedHeight,
-        floating: true,
-        pinned: true,
-        flexibleSpace: FlexibleSpaceBar(
-          collapseMode: CollapseMode.pin,
-          centerTitle: false,
-          titlePadding:
-          const EdgeInsets.symmetric(vertical: 16, horizontal: 0),
-          title: ValueListenableBuilder<double>(
-            valueListenable: _titlePaddingNotifier,
-            builder: (context, value, child) {
-              return Padding(
-                padding: EdgeInsets.symmetric(horizontal: value),
-                child: const Text(
-                  "History",
-                  style: TextStyle(
-                    fontWeight: FontWeight.w700,
-                  ),
-                ),
-              );
-            },
-          ),
-        )));
+    // slivers.add(SliverAppBar(
+    //     expandedHeight: kExpandedHeight,
+    //     floating: true,
+    //     pinned: true,
+    //     flexibleSpace: FlexibleSpaceBar(
+    //       collapseMode: CollapseMode.pin,
+    //       centerTitle: false,
+    //       titlePadding: const EdgeInsets.symmetric(vertical: 16, horizontal: 0),
+    //       title: ValueListenableBuilder<double>(
+    //         valueListenable: _titlePaddingNotifier,
+    //         builder: (context, value, child) {
+    //           return Padding(
+    //             padding: EdgeInsets.symmetric(horizontal: value),
+    //             child: const Text(
+    //               "History",
+    //               style: TextStyle(
+    //                 fontWeight: FontWeight.w700,
+    //               ),
+    //             ),
+    //           );
+    //         },
+    //       ),
+    //     )));
 
     groupedExpenses.forEach((date, expenses) {
       slivers.add(
-        SliverPersistentHeader(
-          delegate: _SliverHeaderDelegate(
-            child: Container(
-              height: 56,
-              color: context.colors.surface,
-              child: Center(
-                child: Text(
-                  DateFormat('dd MMM yyyy').format(DateTime.parse(date)),
-                  style: context.textTheme.bodyMedium?.copyWith(
-                    color: context.colors.primary
-                  ),
-                ),
-              ),
-            ),
+        //   SliverPersistentHeader(
+        //     delegate: _SliverHeaderDelegate(
+        //       child: Container(
+        //         height: 56,
+        //         color: context.colors.surface,
+        //         child: Center(
+        //           child: Text(
+        //             DateFormat('dd MMM yyyy').format(DateTime.parse(date)),
+        //             style: context.textTheme.bodyMedium?.copyWith(
+        //               color: context.colors.primary
+        //             ),
+        //           ),
+        //         ),
+        //       ),
+        //     ),
+        //     pinned: true
+        //   ),
+        // );
+
+        SliverAppBar(
+          title: Text(
+            DateFormat('dd MMM yyyy').format(DateTime.parse(date)),
+            style: context.textTheme.bodyMedium
+                ?.copyWith(color: context.colors.primary),
           ),
-          pinned: true
+          automaticallyImplyLeading: false,
+          centerTitle: true,
+          snap: true,
+          // pinned: true,
+          floating: true,
         ),
       );
 
       slivers.add(
         SliverList(
           delegate: SliverChildBuilderDelegate(
-                (context, index) {
+            (context, index) {
               final expense = expenses[index];
-              return
-                ListTile(
-                  leading: Container(
-                      padding: const EdgeInsets.all(12),
-                      decoration: BoxDecoration(
-                          shape: BoxShape.circle,
-                          color:
-                          Color(expense.category.color).withOpacity(0.2)),
-                      child: Icon(
-                        IconData(expense.category.icon,
-                            fontFamily: "MaterialIcons"),
-                        color: Color(expense.category.color),
-                        size: 20,
-                      )),
-                  title: Text(
-                    expense.category.name,
-                    style: context.textTheme.titleMedium,
-                  ),
-                  subtitle: Text(
-                    expense.createdAt.toFormattedString(),
-                    style: context.textTheme.titleSmall,
-                  ),
-                  trailing: Text("₹${expense.expense}",
-                      style: context.textTheme.headlineMedium
-                          ?.copyWith(fontWeight: FontWeight.w600)),
-                  shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(16)),
-                  onTap: () {},
-                );
+              return ListTile(
+                leading: Container(
+                    padding: const EdgeInsets.all(12),
+                    decoration: BoxDecoration(
+                        shape: BoxShape.circle,
+                        color: Color(expense.category.color).withOpacity(0.2)),
+                    child: Icon(
+                      IconData(expense.category.icon,
+                          fontFamily: "MaterialIcons"),
+                      color: Color(expense.category.color),
+                      size: 20,
+                    )),
+                title: Text(
+                  expense.category.name,
+                  style: context.textTheme.titleMedium,
+                ),
+                subtitle: Text(
+                  expense.createdAt.toFormattedString(),
+                  style: context.textTheme.titleSmall,
+                ),
+                trailing: Text("₹${expense.expense}",
+                    style: context.textTheme.headlineMedium
+                        ?.copyWith(fontWeight: FontWeight.w600)),
+                shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(16)),
+                onTap: () {},
+              );
             },
             childCount: expenses.length,
           ),
@@ -176,9 +184,7 @@ class _HistoryViewState extends State<HistoryView> {
 
     return slivers;
   }
-
 }
-
 
 class _SliverHeaderDelegate extends SliverPersistentHeaderDelegate {
   final Widget child;
@@ -186,7 +192,8 @@ class _SliverHeaderDelegate extends SliverPersistentHeaderDelegate {
   _SliverHeaderDelegate({required this.child});
 
   @override
-  Widget build(BuildContext context, double shrinkOffset, bool overlapsContent) {
+  Widget build(
+      BuildContext context, double shrinkOffset, bool overlapsContent) {
     return child;
   }
 

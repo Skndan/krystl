@@ -6,8 +6,7 @@ class ColumnSpacing extends StatelessWidget {
   final double spacing;
   final EdgeInsets padding;
 
-  const ColumnSpacing({Key? key, required this.children, this.spacing = 16, this.padding = const EdgeInsets.all(8)})
-      : super(key: key);
+  const ColumnSpacing({super.key, required this.children, this.spacing = 16, this.padding = const EdgeInsets.all(8)});
 
   @override
   Widget build(BuildContext context) {

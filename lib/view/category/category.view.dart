@@ -53,7 +53,7 @@ class _CategoryViewState extends State<CategoryView>
       },
       builder: (context, model, child) => Scaffold(
         floatingActionButton: FloatingActionButton(
-          child: Icon(SolarIconsBold.addCircle),
+          child: const Icon(SolarIconsBold.addCircle),
           onPressed: () {
             model.addCategory(null);
           },
@@ -142,7 +142,7 @@ class _CategoryViewState extends State<CategoryView>
                   },
                 );
               } else {
-                return Text('No data available');
+                return const Text('No data available');
               }
             },
           ),
