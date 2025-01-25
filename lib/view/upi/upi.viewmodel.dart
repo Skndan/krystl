@@ -16,4 +16,6 @@ class UpiViewModel extends BaseModel with BaseViewModel {
   void init() {
     uid = FirebaseAuth.instance.currentUser?.uid ?? '';
   }
+
+
 }

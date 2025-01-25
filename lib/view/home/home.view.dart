@@ -12,6 +12,7 @@ import 'package:solar_icons/solar_icons.dart';
 
 import '../../core/base/base_view.dart';
 import '../../core/enums/app_theme.dart';
+import '../../core/notifier/bottom_provider.dart';
 import '../../core/notifier/theme_notifier.dart';
 import '../../product/components/avatar.dart';
 import '../../product/navigation/route_constant.dart';
@@ -28,6 +29,7 @@ class _HomeViewState extends State<HomeView> {
   @override
   Widget build(BuildContext context) {
     var theme = context.watch<ThemeNotifier>().currentThemeEnum;
+    var bottom = context.watch<BottomProvider>();
 
     return BaseView<HomeViewModel>(
       onModelReady: (HomeViewModel model) {
@@ -38,6 +40,36 @@ class _HomeViewState extends State<HomeView> {
         model.getBalance();
       },
       builder: (context, model, child) => Scaffold(
+        floatingActionButtonLocation: FloatingActionButtonLocation.centerDocked,
+        floatingActionButtonAnimator: FloatingActionButtonAnimator.scaling,
+        floatingActionButton: FloatingActionButton(
+          child: const Icon(SolarIconsOutline.qrCode),
+          onPressed: () async {
+            RouterService.instance.pushTo(RouterConstant.scan);
+          },
+        ),
+        bottomNavigationBar: BottomNavigationBar(
+          elevation: 4,
+          enableFeedback: true,
+          showUnselectedLabels: false,
+          // Hide labels for unselected items
+          showSelectedLabels: true,
+          // Show labels for selected items
+          items: [
+            const BottomNavigationBarItem(
+                icon: Icon(SolarIconsBold.home), label: 'Home'),
+            BottomNavigationBarItem(icon: Container(), label: ''),
+            const BottomNavigationBarItem(
+                icon: Icon(SolarIconsBold.pieChart2), label: 'Report')
+          ],
+          currentIndex: bottom.index,
+          onTap: (v) {
+            if (v == 1) {
+              return;
+            }
+            bottom.toggle(v);
+          },
+        ),
         appBar: AppBar(
           automaticallyImplyLeading: false,
           leading: (model.profile != null || model.profile == "")
@@ -61,344 +93,336 @@ class _HomeViewState extends State<HomeView> {
                   model.getBalance();
                 },
                 icon: const Icon(SolarIconsBold.refreshCircle)),
-            // IconButton(
-            //   onPressed: () {
-            //     model.changeTheme();
-            //   },
-            //   icon: theme == AppThemes.dark
-            //       ? const Icon(SolarIconsBold.moonStars)
-            //       : const Icon(SolarIconsBold.sunfog),
-            // ),
             IconButton(
-                onPressed: () {
-
-                },
+              onPressed: () {
+                model.changeTheme();
+              },
+              icon: theme == AppThemes.dark
+                  ? const Icon(SolarIconsBold.moonStars)
+                  : const Icon(SolarIconsBold.sunfog),
+            ),
+            IconButton(
+                onPressed: () {},
                 icon: const Icon(SolarIconsBold.hamburgerMenu)),
           ],
         ),
-        // floatingActionButton: FloatingActionButton.large(
-        //   onPressed: () async {
-        //     RouterService.instance.pushAndClear(RouterConstant.upi);
-        //   },
-        // ),
-        floatingActionButtonLocation: FloatingActionButtonLocation.centerFloat,
-        body: SingleChildScrollView(
-          padding: const EdgeInsets.only(bottom: 200),
-          child: Column(
+        body: [
+          homeWidget(model),
+          const Center(),
+          const Center(
+            child: Text('Stat Page',
+                style: TextStyle(fontSize: 35, fontWeight: FontWeight.bold)),
+          ),
+        ].elementAt(bottom.index),
+      ),
+    );
+  }
+
+  Widget homeWidget(HomeViewModel model) {
+    return SingleChildScrollView(
+      padding: const EdgeInsets.only(bottom: 200),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
+              Row(
                 children: [
-                  Row(
-                    children: [
-                      Expanded(
-                        child: Text(
-                          "Hi, ${FirebaseAuth.instance.currentUser?.displayName} 👋",
-                          style: context.textTheme.headlineLarge
-                              ?.copyWith(fontWeight: FontWeight.w700),
-                        ).pt(16),
-                      ),
-                    ],
+                  Expanded(
+                    child: Text(
+                      "Hi, ${FirebaseAuth.instance.currentUser?.displayName} 👋",
+                      style: context.textTheme.headlineLarge
+                          ?.copyWith(fontWeight: FontWeight.w700),
+                    ).pt(16),
                   ),
-                  Container(
-                    height: 105,
-                    decoration: BoxDecoration(
-                        color: context.colors.primaryContainer,
-                        borderRadius: const BorderRadius.vertical(
-                            top: Radius.circular(16))),
-                    child: Row(
+                ],
+              ),
+              Container(
+                height: 105,
+                decoration: BoxDecoration(
+                    color: context.colors.primaryContainer,
+                    borderRadius:
+                        const BorderRadius.vertical(top: Radius.circular(16))),
+                child: Row(
+                  children: [
+                    Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
                       children: [
-                        Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                        Text("Your Mileage",
+                            style: context.textTheme.titleMedium?.copyWith(
+                                color: context.colors.onPrimaryContainer)),
+                        AnimatedFlipCounter(
+                          prefix: "₹",
+                          value: model.balance.toInt(),
+                          duration: const Duration(milliseconds: 1000),
+                          negativeSignDuration:
+                              const Duration(milliseconds: 1000),
+                          textStyle: context.textTheme.headlineLarge?.copyWith(
+                              letterSpacing: -2,
+                              fontWeight: FontWeight.w700,
+                              color: context.colors.onTertiaryContainer),
+                        ),
+                      ],
+                    ),
+                  ],
+                ).phv(16, 14),
+              ).pt(24),
+              Row(
+                children: [
+                  Expanded(
+                    child: Container(
+                      height: 105,
+                      decoration: BoxDecoration(
+                          color: context.colors.tertiaryContainer,
+                          borderRadius: const BorderRadius.only(
+                              bottomLeft: Radius.circular(16))),
+                      child: Row(
+                        children: [
+                          Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                            children: [
+                              Text("Burned Today",
+                                  style: context.textTheme.titleMedium
+                                      ?.copyWith(
+                                          color: context
+                                              .colors.onTertiaryContainer)),
+                              AnimatedFlipCounter(
+                                prefix: "₹",
+                                value: model.todayExpense.toInt(),
+                                duration: const Duration(milliseconds: 1000),
+                                negativeSignDuration:
+                                    const Duration(milliseconds: 1000),
+                                textStyle: context.textTheme.headlineLarge
+                                    ?.copyWith(
+                                        letterSpacing: -2,
+                                        fontWeight: FontWeight.w700,
+                                        color:
+                                            context.colors.onTertiaryContainer),
+                              ),
+                            ],
+                          ),
+                        ],
+                      ).phv(16, 14),
+                    ),
+                  ),
+                  Expanded(
+                    child: Container(
+                      height: 105,
+                      decoration: BoxDecoration(
+                          color: context.colors.secondaryContainer,
+                          borderRadius: const BorderRadius.only(
+                              bottomRight: Radius.circular(16))),
+                      child: Row(
+                        children: [
+                          Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                            children: [
+                              Text("Daily Fuel",
+                                  style: context.textTheme.titleMedium
+                                      ?.copyWith(
+                                          color: context
+                                              .colors.onSecondaryContainer)),
+                              AnimatedFlipCounter(
+                                prefix: "₹",
+                                value: model.dailyFuel.toInt(),
+                                duration: const Duration(milliseconds: 1000),
+                                negativeSignDuration:
+                                    const Duration(milliseconds: 1000),
+                                textStyle: context.textTheme.headlineLarge
+                                    ?.copyWith(
+                                        letterSpacing: -2,
+                                        fontWeight: FontWeight.w700,
+                                        color: context
+                                            .colors.onSecondaryContainer),
+                              ),
+                            ],
+                          ),
+                        ],
+                      ).phv(16, 14),
+                    ),
+                  )
+                ],
+              ),
+              Row(
+                children: [
+                  Expanded(
+                    child: GestureDetector(
+                      onTap: () {
+                        RouterService.instance.pushTo(RouterConstant.budget);
+                      },
+                      child: SizedBox(
+                        child: Column(
                           children: [
-                            Text("Your Mileage",
-                                style: context.textTheme.titleMedium?.copyWith(
-                                    color: context.colors.onPrimaryContainer)),
-                            AnimatedFlipCounter(
-                              prefix: "₹",
-                              value: model.balance.toInt(),
-                              duration: const Duration(milliseconds: 1000),
-                              negativeSignDuration:
-                                  const Duration(milliseconds: 1000),
-                              textStyle: context.textTheme.headlineLarge
-                                  ?.copyWith(
-                                      letterSpacing: -2,
-                                      fontWeight: FontWeight.w700,
-                                      color:
-                                          context.colors.onTertiaryContainer),
-                            ),
+                            Container(
+                              decoration: BoxDecoration(
+                                  color: context.colors.primaryContainer,
+                                  shape: BoxShape.circle),
+                              child: Icon(
+                                SolarIconsBold.moneyBag,
+                                color: context.colors.primary,
+                              ).pa(24),
+                            ).pb(8),
+                            Text(
+                              "Budget",
+                              style: context.textTheme.bodyMedium
+                                  ?.copyWith(fontWeight: FontWeight.w600),
+                            )
                           ],
                         ),
-                      ],
-                    ).phv(16, 14),
-                  ).pt(24),
-                  Row(
-                    children: [
-                      Expanded(
-                        child: Container(
-                          height: 105,
-                          decoration: BoxDecoration(
-                              color: context.colors.tertiaryContainer,
-                              borderRadius: const BorderRadius.only(
-                                  bottomLeft: Radius.circular(16))),
-                          child: Row(
-                            children: [
-                              Column(
-                                crossAxisAlignment: CrossAxisAlignment.start,
-                                mainAxisAlignment:
-                                    MainAxisAlignment.spaceBetween,
-                                children: [
-                                  Text("Burned Today",
-                                      style: context.textTheme.titleMedium
-                                          ?.copyWith(
-                                              color: context
-                                                  .colors.onTertiaryContainer)),
-                                  AnimatedFlipCounter(
-                                    prefix: "₹",
-                                    value: model.todayExpense.toInt(),
-                                    duration:
-                                        const Duration(milliseconds: 1000),
-                                    negativeSignDuration:
-                                        const Duration(milliseconds: 1000),
-                                    textStyle: context.textTheme.headlineLarge
-                                        ?.copyWith(
-                                            letterSpacing: -2,
-                                            fontWeight: FontWeight.w700,
-                                            color: context
-                                                .colors.onTertiaryContainer),
-                                  ),
-                                ],
-                              ),
-                            ],
-                          ).phv(16, 14),
-                        ),
                       ),
-                      Expanded(
-                        child: Container(
-                          height: 105,
-                          decoration: BoxDecoration(
-                              color: context.colors.secondaryContainer,
-                              borderRadius: const BorderRadius.only(
-                                  bottomRight: Radius.circular(16))),
-                          child: Row(
-                            children: [
-                              Column(
-                                crossAxisAlignment: CrossAxisAlignment.start,
-                                mainAxisAlignment:
-                                    MainAxisAlignment.spaceBetween,
-                                children: [
-                                  Text("Daily Fuel",
-                                      style: context.textTheme.titleMedium
-                                          ?.copyWith(
-                                              color: context.colors
-                                                  .onSecondaryContainer)),
-                                  AnimatedFlipCounter(
-                                    prefix: "₹",
-                                    value: model.dailyFuel.toInt(),
-                                    duration:
-                                        const Duration(milliseconds: 1000),
-                                    negativeSignDuration:
-                                        const Duration(milliseconds: 1000),
-                                    textStyle: context.textTheme.headlineLarge
-                                        ?.copyWith(
-                                            letterSpacing: -2,
-                                            fontWeight: FontWeight.w700,
-                                            color: context
-                                                .colors.onSecondaryContainer),
-                                  ),
-                                ],
-                              ),
-                            ],
-                          ).phv(16, 14),
-                        ),
-                      )
-                    ],
+                    ),
                   ),
-                  Row(
-                    children: [
-                      Expanded(
-                        child: GestureDetector(
-                          onTap: () {
-                            RouterService.instance
-                                .pushTo(RouterConstant.budget);
-                          },
-                          child: SizedBox(
-                            child: Column(
-                              children: [
-                                Container(
-                                  decoration: BoxDecoration(
-                                      color: context.colors.primaryContainer,
-                                      shape: BoxShape.circle),
-                                  child: Icon(
-                                    SolarIconsBold.moneyBag,
-                                    color: context.colors.primary,
-                                  ).pa(24),
-                                ).pb(8),
-                                Text(
-                                  "Budget",
-                                  style: context.textTheme.bodyMedium
-                                      ?.copyWith(fontWeight: FontWeight.w600),
-                                )
-                              ],
-                            ),
-                          ),
+                  Expanded(
+                    child: GestureDetector(
+                      onTap: () {
+                        RouterService.instance.pushTo(RouterConstant.history);
+                      },
+                      child: SizedBox(
+                        child: Column(
+                          children: [
+                            Container(
+                              decoration: BoxDecoration(
+                                  color: context.colors.primary,
+                                  shape: BoxShape.circle),
+                              child: Icon(
+                                SolarIconsBold.file,
+                                color: context.colors.primaryContainer,
+                              ).pa(24),
+                            ).pb(8),
+                            Text(
+                              "History",
+                              style: context.textTheme.bodyMedium
+                                  ?.copyWith(fontWeight: FontWeight.w600),
+                            )
+                          ],
                         ),
                       ),
-                      Expanded(
-                        child: GestureDetector(
-                          onTap: (){
-                            RouterService.instance
-                                .pushTo(RouterConstant.history);
-                          },
-                          child: SizedBox(
-                            child: Column(
-                              children: [
-                                Container(
-                                  decoration: BoxDecoration(
-                                      color: context.colors.primary,
-                                      shape: BoxShape.circle),
-                                  child: Icon(
-                                    SolarIconsBold.file,
-                                    color: context.colors.primaryContainer,
-                                  ).pa(24),
-                                ).pb(8),
-                                Text(
-                                  "History",
-                                  style: context.textTheme.bodyMedium
-                                      ?.copyWith(fontWeight: FontWeight.w600),
-                                )
-                              ],
-                            ),
-                          ),
+                    ),
+                  ),
+                  Expanded(
+                    child: GestureDetector(
+                      onTap: () {
+                        RouterService.instance.pushTo(RouterConstant.category);
+                      },
+                      child: SizedBox(
+                        child: Column(
+                          children: [
+                            Container(
+                              decoration: BoxDecoration(
+                                  color: context.colors.secondary,
+                                  shape: BoxShape.circle),
+                              child: Icon(
+                                SolarIconsBold.fileCheck,
+                                color: context.colors.secondaryContainer,
+                              ).pa(24),
+                            ).pb(8),
+                            Text(
+                              "Categories",
+                              style: context.textTheme.bodyMedium
+                                  ?.copyWith(fontWeight: FontWeight.w600),
+                            )
+                          ],
                         ),
                       ),
-                      Expanded(
-                        child: GestureDetector(
-                          onTap: () {
-                            RouterService.instance
-                                .pushTo(RouterConstant.category);
-                          },
-                          child: SizedBox(
-                            child: Column(
-                              children: [
-                                Container(
-                                  decoration: BoxDecoration(
-                                      color: context.colors.secondary,
-                                      shape: BoxShape.circle),
-                                  child: Icon(
-                                    SolarIconsBold.fileCheck,
-                                    color: context.colors.secondaryContainer,
-                                  ).pa(24),
-                                ).pb(8),
-                                Text(
-                                  "Categories",
-                                  style: context.textTheme.bodyMedium
-                                      ?.copyWith(fontWeight: FontWeight.w600),
-                                )
-                              ],
-                            ),
-                          ),
+                    ),
+                  ),
+                  Expanded(
+                    child: GestureDetector(
+                      onTap: () {
+                        model.showExpenseDialog();
+                      },
+                      child: SizedBox(
+                        child: Column(
+                          children: [
+                            Container(
+                              decoration: BoxDecoration(
+                                  color: context.colors.tertiaryContainer,
+                                  shape: BoxShape.circle),
+                              child: Icon(
+                                SolarIconsBold.circleTopUp,
+                                color: context.colors.tertiary,
+                              ).pa(24),
+                            ).pb(8),
+                            Text(
+                              "Expense",
+                              style: context.textTheme.bodyMedium
+                                  ?.copyWith(fontWeight: FontWeight.w600),
+                            )
+                          ],
                         ),
                       ),
-                      Expanded(
-                        child: GestureDetector(
-                          onTap: () {
-                            model.showExpenseDialog();
-                          },
-                          child: SizedBox(
-                            child: Column(
-                              children: [
-                                Container(
-                                  decoration: BoxDecoration(
-                                      color: context.colors.tertiaryContainer,
-                                      shape: BoxShape.circle),
-                                  child: Icon(
-                                    SolarIconsBold.circleTopUp,
-                                    color: context.colors.tertiary,
-                                  ).pa(24),
-                                ).pb(8),
-                                Text(
-                                  "Expense",
-                                  style: context.textTheme.bodyMedium
-                                      ?.copyWith(fontWeight: FontWeight.w600),
-                                )
-                              ],
-                            ),
-                          ),
-                        ),
-                      )
-                    ],
-                  ).pt(36),
-                  Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                    crossAxisAlignment: CrossAxisAlignment.center,
-                    children: [
-                      Text(
-                        "Today’s Expenses",
-                        style: context.textTheme.titleMedium?.copyWith(
-                            fontWeight: FontWeight.w600,
-                            letterSpacing: 0.0,
-                            fontSize: 18),
-                      ),
-                      TextButton(
-                          onPressed: () {},
-                          child: Text("View All",
-                              style: context.textTheme.titleSmall
-                                  ?.copyWith(fontWeight: FontWeight.w600)))
-                    ],
-                  ).pt(24),
+                    ),
+                  )
                 ],
-              ).phv(16, 0),
-              model.expenses.isEmpty
-                  ? Column(
-                      mainAxisSize: MainAxisSize.min,
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      children: [
-                        Center(
-                            child:
-                                Image.asset('assets/image/empty-document.png')),
-                        Text("No transactions so far",
-                            style: context.textTheme.titleMedium
-                                ?.copyWith(fontWeight: FontWeight.w600))
-                      ],
-                    )
-                  : Container(),
-              ...model.expenses.map((e) {
-                var timestamp = e['date'] as Timestamp;
-                return ListTile(
-                  leading: Container(
-                      padding: const EdgeInsets.all(12),
-                      decoration: BoxDecoration(
-                          shape: BoxShape.circle,
-                          color:
-                              Color(e["category"]["color"]).withOpacity(0.2)),
-                      child: Icon(
-                        IconData(e["category"]["icon"],
-                            fontFamily: "MaterialIcons"),
-                        color: Color(e["category"]["color"]),
-                        size: 20,
-                      )),
-                  title: Text(
-                    e["category"]["name"],
-                    style: context.textTheme.titleMedium,
+              ).pt(36),
+              Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                crossAxisAlignment: CrossAxisAlignment.center,
+                children: [
+                  Text(
+                    "Today’s Expenses",
+                    style: context.textTheme.titleMedium?.copyWith(
+                        fontWeight: FontWeight.w600,
+                        letterSpacing: 0.0,
+                        fontSize: 18),
                   ),
-                  subtitle: Text(
-                    timestamp.toFormattedString(),
-                    style: context.textTheme.titleSmall,
-                  ),
-                  trailing: Text("₹${e["expense"]}",
-                      style: context.textTheme.headlineMedium
-                          ?.copyWith(fontWeight: FontWeight.w600)),
-                  shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(16)),
-                  onTap: () {},
-                );
-              })
+                  TextButton(
+                      onPressed: () {},
+                      child: Text("View All",
+                          style: context.textTheme.titleSmall
+                              ?.copyWith(fontWeight: FontWeight.w600)))
+                ],
+              ).pt(24),
             ],
-          ),
-        ),
+          ).phv(16, 0),
+          model.expenses.isEmpty
+              ? Column(
+                  mainAxisSize: MainAxisSize.min,
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    Center(
+                        child: Image.asset('assets/image/empty-document.png')),
+                    Text("No transactions so far",
+                        style: context.textTheme.titleMedium
+                            ?.copyWith(fontWeight: FontWeight.w600))
+                  ],
+                )
+              : Container(),
+          ...model.expenses.map((e) {
+            var timestamp = e['date'] as Timestamp;
+            return ListTile(
+              leading: Container(
+                  padding: const EdgeInsets.all(12),
+                  decoration: BoxDecoration(
+                      shape: BoxShape.circle,
+                      color: Color(e["category"]["color"]).withOpacity(0.2)),
+                  child: Icon(
+                    IconData(e["category"]["icon"],
+                        fontFamily: "MaterialIcons"),
+                    color: Color(e["category"]["color"]),
+                    size: 20,
+                  )),
+              title: Text(
+                e["category"]["name"],
+                style: context.textTheme.titleMedium,
+              ),
+              subtitle: Text(
+                timestamp.toFormattedString(),
+                style: context.textTheme.titleSmall,
+              ),
+              trailing: Text("₹${e["expense"]}",
+                  style: context.textTheme.headlineMedium
+                      ?.copyWith(fontWeight: FontWeight.w600)),
+              shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(16)),
+              onTap: () {},
+            );
+          })
+        ],
       ),
     );
   }

@@ -44,9 +44,9 @@ class BaseModel extends ChangeNotifier {
 
   BaseModel() {
     // Subscribe to the connectivity Changed Steam
-    Connectivity().onConnectivityChanged.listen((ConnectivityResult result) {
+    Connectivity().onConnectivityChanged.listen((List<ConnectivityResult> result) {
       // Use Connectivity() here to gather more info if you need t
-      connectionStatusController.add(_getStatusFromResult(result));
+      // connectionStatusController.add(_getStatusFromResult(result));
     });
   }
 

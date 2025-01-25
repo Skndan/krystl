@@ -1,4 +1,5 @@
 import 'package:internet_connection_checker/internet_connection_checker.dart';
+import 'package:krystl/core/notifier/bottom_provider.dart';
 import 'package:provider/provider.dart';
 import 'package:provider/single_child_widget.dart';
 
@@ -18,11 +19,14 @@ class ApplicationProvider {
     ChangeNotifierProvider(
       create: (context) => ThemeNotifier(),
     ),
-    StreamProvider<InternetConnectionStatus>(
-      initialData: InternetConnectionStatus.connected,
-      create: (_) {
-        return InternetConnectionChecker().onStatusChange;
-      },
-    )
+    ChangeNotifierProvider(
+      create: (context) => BottomProvider(),
+    ),
+    // StreamProvider<InternetConnectionStatus>(
+    //   initialData: InternetConnectionStatus.connected,
+    //   create: (_) {
+    //     return InternetConnectionChecker().onStatusChange;
+    //   },
+    // )
   ];
 }

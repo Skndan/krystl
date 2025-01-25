@@ -5,4 +5,5 @@ class RouterConstant {
   static const budget = '/budget';
   static const history = '/history';
   static const upi = '/upi';
+  static const scan = '/scan';
 }
