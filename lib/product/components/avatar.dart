@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 
 /// Created by Balaji Malathi on 3/7/2024 at 5:03 AM.
-/// Created by Balaji Malathi on 10/15/2023 at 6:12 PM.
 class Avatar extends StatelessWidget {
   final double height, width;
   final String image;

@@ -61,14 +61,19 @@ class _HomeViewState extends State<HomeView> {
                   model.getBalance();
                 },
                 icon: const Icon(SolarIconsBold.refreshCircle)),
+            // IconButton(
+            //   onPressed: () {
+            //     model.changeTheme();
+            //   },
+            //   icon: theme == AppThemes.dark
+            //       ? const Icon(SolarIconsBold.moonStars)
+            //       : const Icon(SolarIconsBold.sunfog),
+            // ),
             IconButton(
-              onPressed: () {
-                model.changeTheme();
-              },
-              icon: theme == AppThemes.dark
-                  ? const Icon(SolarIconsBold.moonStars)
-                  : const Icon(SolarIconsBold.sunfog),
-            ),
+                onPressed: () {
+
+                },
+                icon: const Icon(SolarIconsBold.hamburgerMenu)),
           ],
         ),
         // floatingActionButton: FloatingActionButton.large(
@@ -89,7 +94,7 @@ class _HomeViewState extends State<HomeView> {
                     children: [
                       Expanded(
                         child: Text(
-                          "Hi, ${FirebaseAuth.instance.currentUser?.displayName}",
+                          "Hi, ${FirebaseAuth.instance.currentUser?.displayName} 👋",
                           style: context.textTheme.headlineLarge
                               ?.copyWith(fontWeight: FontWeight.w700),
                         ).pt(16),

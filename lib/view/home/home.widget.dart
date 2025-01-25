@@ -1,7 +1,6 @@
 import 'dart:math';
 
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_form_builder/flutter_form_builder.dart';
@@ -20,12 +19,10 @@ const fullScale = 1.0;
 const pageHeight = 150.0;
 
 class ExpenseFormWidget extends StatefulWidget {
-  final GlobalKey<FormBuilderState> formKey;
   final Map<String, dynamic> initialValue;
 
   const ExpenseFormWidget({
     super.key,
-    required this.formKey,
     required this.initialValue,
   });
 
@@ -50,8 +47,6 @@ class _ExpenseFormWidgetState extends State<ExpenseFormWidget> {
         initialPage: currentPage, viewportFraction: viewPortFraction);
     super.initState();
   }
-
-  FocusNode textSecondFocusNode = FocusNode();
 
   @override
   Widget build(BuildContext context) {
@@ -91,6 +86,7 @@ class _ExpenseFormWidgetState extends State<ExpenseFormWidget> {
                   onModelReady: (HomeViewModel model) {
                     model.setContext(context);
                     model.init();
+                    model.setInitialValue(widget.initialValue);
                     model.initHome();
                   },
                   builder: (context, model, child) => model.state ==
@@ -148,10 +144,10 @@ class _ExpenseFormWidgetState extends State<ExpenseFormWidget> {
                                     ),
                                   ),
                                   FormBuilder(
-                                    key: widget.formKey,
+                                    key: model.formKey,
                                     child: FormBuilderTextField(
                                       name: "expense",
-                                      focusNode: textSecondFocusNode,
+                                      focusNode: model.textSecondFocusNode,
                                       autofocus: true,
                                       decoration: InputDecoration(
                                         hintText: 'How much you spent?',
@@ -173,156 +169,22 @@ class _ExpenseFormWidgetState extends State<ExpenseFormWidget> {
                             }),
                             Row(
                               children: [
-                                ElevatedButton(
-                                  style: TextButton.styleFrom(
-                                    elevation: 0,
-                                    backgroundColor:
-                                        context.colors.primaryContainer,
-                                    foregroundColor:
-                                        context.colors.onPrimaryContainer,
-                                    shape: const RoundedRectangleBorder(
-                                      borderRadius:
-                                          BorderRadius.all(Radius.circular(8)),
-                                    ),
-                                    minimumSize:
-                                        Size((context.width / 2) - 24, 48),
-                                  ),
-                                  onPressed: () async {
-                                    if (widget.formKey.currentState
-                                            ?.saveAndValidate() ??
-                                        false) {
-                                      FocusManager.instance.primaryFocus
-                                          ?.unfocus();
-                                      var formVal =
-                                          widget.formKey.currentState!.value;
-
-                                      var dd = {
-                                        "category": model.list[currentPage].id,
-                                        "month": model.monthMapInverse[
-                                            DateTime.now().month],
-                                        "year": DateTime.now().year,
-                                        "expense":
-                                            double.parse(formVal["expense"]),
-                                        "expenseAt": DateTime.now(),
-                                        "createdAt": DateTime.now()
-                                      };
-                                      int year = DateTime.now().year;
-                                      //
-                                      if (widget.initialValue["id"] != null) {
-                                        await _firestoreService
-                                            .update(
-                                                '/${FirebaseAuth.instance.currentUser?.uid}/expense/$year',
-                                                widget.initialValue["id"],
-                                                dd)
-                                            .then((s) {
-                                          Navigator.pop(context);
-                                        });
-                                      } else {
-                                        await _firestoreService
-                                            .insert(
-                                                '/${FirebaseAuth.instance.currentUser?.uid}/expense/$year',
-                                                dd)
-                                            .then((s) async {
-                                          await _firestoreService
-                                              .updateBalance(
-                                                  "${FirebaseAuth.instance.currentUser?.uid}",
-                                                  dd)
-                                              .then((s) {
-                                            Navigator.pop(context);
-                                          });
-                                        });
-                                      }
-                                      // debugPrint(dd.toString());
-                                    } else {
-                                      debugPrint(widget
-                                          .formKey.currentState?.value
-                                          .toString());
-                                      debugPrint('validation failed');
-                                    }
-                                  },
-                                  child: Text(
-                                    widget.initialValue["id"] != null
-                                        ? "UPDATE"
-                                        : "ADD & CLOSE",
-                                    style: context.textTheme.bodyLarge
-                                        ?.copyWith(
-                                            fontWeight: FontWeight.w700,
-                                            color: context
-                                                .colors.onPrimaryContainer),
-                                  ),
+                                _buildActionButton(
+                                  context,
+                                  label: widget.initialValue["id"] != null
+                                      ? "UPDATE"
+                                      : "ADD & CLOSE",
+                                  onPressed: () => model.handleSave(currentPage,
+                                      closeAfterSave: true),
                                 ).pr(16),
-                                ElevatedButton(
-                                  style: TextButton.styleFrom(
-                                    elevation: 0,
-                                    backgroundColor:
-                                        context.colors.primaryContainer,
-                                    foregroundColor:
-                                        context.colors.onPrimaryContainer,
-                                    shape: const RoundedRectangleBorder(
-                                      borderRadius:
-                                          BorderRadius.all(Radius.circular(8)),
-                                    ),
-                                    minimumSize:
-                                        Size((context.width / 2) - 24, 48),
-                                  ),
-                                  onPressed: () async {
-                                    if (widget.formKey.currentState
-                                            ?.saveAndValidate() ??
-                                        false) {
-                                      // FocusManager.instance.primaryFocus
-                                      //     ?.unfocus();
-                                      var formVal =
-                                          widget.formKey.currentState!.value;
-                                      int year = DateTime.now().year;
-                                      var dd = {
-                                        "category": model.list[currentPage].id,
-                                        "month": model.monthMapInverse[
-                                            DateTime.now().month],
-                                        "year": year,
-                                        "expense": formVal["expense"],
-                                        "createdAt": DateTime.now()
-                                      };
-
-                                      //
-                                      if (widget.initialValue["id"] != null) {
-                                        await _firestoreService
-                                            .update(
-                                                '/${FirebaseAuth.instance.currentUser?.uid}/expense/$year',
-                                                widget.initialValue["id"],
-                                                dd)
-                                            .then((s) {
-                                          textSecondFocusNode.requestFocus();
-                                          widget.formKey.currentState?.reset();
-                                        });
-                                      } else {
-                                        await _firestoreService
-                                            .insert(
-                                                '/${FirebaseAuth.instance.currentUser?.uid}/expense/$year',
-                                                dd)
-                                            .then((s) {
-                                          textSecondFocusNode.requestFocus();
-                                          widget.formKey.currentState?.reset();
-                                        });
-                                      }
-                                      // debugPrint(dd.toString());
-                                    } else {
-                                      debugPrint(widget
-                                          .formKey.currentState?.value
-                                          .toString());
-                                      debugPrint('validation failed');
-                                    }
-                                  },
-                                  child: Text(
-                                    widget.initialValue["id"] != null
-                                        ? "UPDATE"
-                                        : "ADD",
-                                    style: context.textTheme.bodyLarge
-                                        ?.copyWith(
-                                            fontWeight: FontWeight.w700,
-                                            color: context
-                                                .colors.onPrimaryContainer),
-                                  ),
-                                )
+                                _buildActionButton(
+                                  context,
+                                  label: widget.initialValue["id"] != null
+                                      ? "UPDATE"
+                                      : "ADD",
+                                  onPressed: () => model.handleSave(currentPage,
+                                      closeAfterSave: false),
+                                ),
                               ],
                             ).phv(0, 16),
                           ],
@@ -332,6 +194,32 @@ class _ExpenseFormWidgetState extends State<ExpenseFormWidget> {
             ),
           ),
         ],
+      ),
+    );
+  }
+
+  Widget _buildActionButton(
+    BuildContext context, {
+    required String label,
+    required VoidCallback onPressed,
+  }) {
+    return ElevatedButton(
+      style: TextButton.styleFrom(
+        elevation: 0,
+        backgroundColor: Theme.of(context).colorScheme.primaryContainer,
+        foregroundColor: Theme.of(context).colorScheme.onPrimaryContainer,
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.circular(8),
+        ),
+        minimumSize: Size((MediaQuery.of(context).size.width / 2) - 24, 48),
+      ),
+      onPressed: onPressed,
+      child: Text(
+        label,
+        style: Theme.of(context).textTheme.bodyLarge?.copyWith(
+              fontWeight: FontWeight.w700,
+              color: Theme.of(context).colorScheme.onPrimaryContainer,
+            ),
       ),
     );
   }

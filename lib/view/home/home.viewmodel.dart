@@ -25,6 +25,10 @@ class HomeViewModel extends BaseModel with BaseViewModel {
   double balance = 0.0;
   double dailyFuel = 0.0;
 
+  Map<String, dynamic> initialValue = {};
+
+  FocusNode textSecondFocusNode = FocusNode();
+
   //endregion
 
   @override
@@ -66,9 +70,8 @@ class HomeViewModel extends BaseModel with BaseViewModel {
         context: context,
         isScrollControlled: true,
         builder: (context) {
-          return ExpenseFormWidget(
-            formKey: formKey,
-            initialValue: const {},
+          return const ExpenseFormWidget(
+            initialValue: {},
           );
         }).then((value) async {
       await getExpenses();
@@ -103,9 +106,9 @@ class HomeViewModel extends BaseModel with BaseViewModel {
   }
 
   Future getExpenses() async {
-    todayExpense = 0.0;
     setState(ViewState.busy);
     expenses = await _firestoreService.fetchExpensesWithCategory();
+    todayExpense = 0.0;
     for (var item in expenses) {
       todayExpense += double.parse(item["expense"].toString());
     }
@@ -152,4 +155,66 @@ class HomeViewModel extends BaseModel with BaseViewModel {
     ]);
     setState(ViewState.idle);
   }
+
+
+
+  Future<void> handleSave(int currentPage, {required bool closeAfterSave}) async {
+    if (formKey.currentState?.saveAndValidate() ?? false) {
+      FocusScope.of(context).unfocus();
+      var formVal = formKey.currentState!.value;
+      int year = DateTime.now().year;
+      var expenseData = {
+        "category": list[currentPage].id,
+        "month": monthMapInverse[DateTime.now().month],
+        "year": year,
+        "expense": double.parse(formVal["expense"]),
+        "expenseAt": DateTime.now(),
+        "createdAt": DateTime.now(),
+      };
+
+      if (initialValue["id"] != null) {
+        await _firestoreService.update(
+          '/${FirebaseAuth.instance.currentUser?.uid}/expense/$year',
+          initialValue["id"],
+          expenseData,
+        ).then((_) {
+          if (closeAfterSave) {
+            Navigator.pop(context);
+          } else {
+            _resetForm();
+          }
+        });
+      } else {
+        await _firestoreService.insert(
+          '/${FirebaseAuth.instance.currentUser?.uid}/expense/$year',
+          expenseData,
+        ).then((_) async {
+          await _firestoreService.updateBalance(
+            FirebaseAuth.instance.currentUser!.uid,
+            expenseData,
+          ).then((_) {
+            if (closeAfterSave) {
+              Navigator.pop(context);
+            } else {
+              _resetForm();
+            }
+          });
+        });
+      }
+    } else {
+      debugPrint(formKey.currentState?.value.toString());
+      debugPrint('Validation failed');
+    }
+  }
+
+  void _resetForm() {
+    textSecondFocusNode.requestFocus();
+    formKey.currentState?.reset();
+  }
+
+  void setInitialValue(Map<String, dynamic> initialValue) {
+    this.initialValue = initialValue;
+  }
+
+
 }

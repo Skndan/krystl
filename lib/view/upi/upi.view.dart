@@ -53,7 +53,6 @@ class _UpiViewState extends State<UpiView> {
             Text(value),
             Keypad(onChanged: (value) {
               setState(() {
-
                 this.value = value;
               });
             },),

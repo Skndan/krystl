@@ -100,7 +100,7 @@ class _SplashViewState extends State<SplashView> {
                           padding: const EdgeInsets.symmetric(
                               vertical: 12, horizontal: 56.0),
                           decoration: BoxDecoration(
-                            color: context.colors.primaryContainer,
+                            color: Colors.white,
                             borderRadius: BorderRadius.circular(10.0),
                             // border: Border.all(width: 2, color: primaryDark)
                           ),
@@ -126,7 +126,7 @@ class _SplashViewState extends State<SplashView> {
                               Text(
                                 "Sign in with Google",
                                 style: context.textTheme.bodyLarge
-                                    ?.copyWith(color: context.colors.surface, fontWeight: FontWeight.w600),
+                                    ?.copyWith(color: context.colors.surface, fontWeight: FontWeight.w600, letterSpacing: -0.5),
                               ),
                             ],
                           ),

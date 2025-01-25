@@ -104,7 +104,6 @@ class MarkApp extends StatefulWidget {
 }
 
 class _MarkAppState extends State<MarkApp> {
-  bool isAuthenticated = false, vehicleCreated = false;
 
   @override
   Widget build(BuildContext context) {
@@ -129,10 +128,6 @@ class _MarkAppState extends State<MarkApp> {
           });
         }));
   }
-
-  // LocalManager.instance.getBool(Pref.isLogged)
-  // ? RouterConstant.home
-  //     :
   @override
   void initState() {
     super.initState();
