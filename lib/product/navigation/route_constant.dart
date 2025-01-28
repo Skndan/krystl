@@ -6,4 +6,5 @@ class RouterConstant {
   static const history = '/history';
   static const upi = '/upi';
   static const scan = '/scan';
+  static const profile = '/profile';
 }

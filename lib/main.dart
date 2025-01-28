@@ -59,7 +59,7 @@ Future<void> main() async {
     ),
 
     watcherMail: '',
-    isProd: !kDebugMode,
+    isProd: false,
   );
 
   // Setting up callbacks

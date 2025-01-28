@@ -1,12 +1,13 @@
 import 'package:flutter/material.dart';
-import 'package:krystl/view/category/category.view.dart';
-import 'package:krystl/view/upi/scan.view.dart';
-
 import 'package:krystl/view/budget/budget.view.dart';
+import 'package:krystl/view/category/category.view.dart';
 import 'package:krystl/view/history/history.view.dart';
 import 'package:krystl/view/home/home.view.dart';
+import 'package:krystl/view/profile/profile.view.dart';
 import 'package:krystl/view/splash.view.dart';
+import 'package:krystl/view/upi/scan.view.dart';
 import 'package:krystl/view/upi/upi.view.dart';
+
 import 'route_constant.dart';
 
 /// Navigation Route which generate the routes
@@ -43,8 +44,10 @@ class RouterGenerator {
         return navigate(UpiView(upi: args["upi"]), settings);
       case RouterConstant.history:
         return navigate(const HistoryView(), settings);
-        case RouterConstant.scan:
+      case RouterConstant.scan:
         return navigate(const ScanView(), settings);
+      case RouterConstant.profile:
+        return navigate(const ProfileView(), settings);
       default:
         return MaterialPageRoute(
           builder: (context) => const NotFoundNavigationWidget(),

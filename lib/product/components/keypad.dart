@@ -40,7 +40,7 @@ class _KeypadState extends State<Keypad> {
         onPressed: () => _onKeyPress(key),
         style: FilledButton.styleFrom(
           shape:
-              RoundedRectangleBorder(borderRadius: BorderRadius.circular(32.0)),
+              RoundedRectangleBorder(borderRadius: BorderRadius.circular(16.0)),
           minimumSize: const Size(100, 56), //////// HERE
         ),
         child: Text(key,
@@ -55,7 +55,7 @@ class _KeypadState extends State<Keypad> {
         onPressed: () => _onKeyPress(key),
         style: FilledButton.styleFrom(
           shape:
-              RoundedRectangleBorder(borderRadius: BorderRadius.circular(32.0)),
+              RoundedRectangleBorder(borderRadius: BorderRadius.circular(16.0)),
           minimumSize: const Size(100, 56), //////// HERE
         ),
         child: const Icon(
@@ -84,7 +84,7 @@ class _KeypadState extends State<Keypad> {
       margin: const EdgeInsets.all(8.0),
       decoration: BoxDecoration(
         color: Theme.of(context).colorScheme.secondaryContainer,
-        borderRadius: BorderRadius.circular(36)
+        borderRadius: BorderRadius.circular(24)
       ),
       child: Column(
         children: [

@@ -2,6 +2,7 @@ import 'dart:math';
 
 import 'package:flutter/material.dart';
 import 'package:krystl/core/extensions/context_extension.dart';
+import 'package:krystl/core/extensions/string_extension.dart';
 import 'package:krystl/core/extensions/widget_extension.dart';
 import 'package:krystl/view/budget/budget.viewmodel.dart';
 import 'package:solar_icons/solar_icons.dart';
@@ -135,7 +136,7 @@ class _BudgetViewState extends State<BudgetView> with TickerProviderStateMixin {
                                         documents[index]["year"])),
                               ).pb(24),
                               Text(
-                                "\$${documents[index]["budget"]}",
+                                "${documents[index]["budget"]}".toAmount,
                                 style: context.textTheme.displaySmall?.copyWith(
                                     color: model.checkYearText(documents[index]["month"],
                                         documents[index]["year"]),
