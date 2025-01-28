@@ -86,7 +86,7 @@ class _QrScannerViewState extends State<QrScannerView> {
               mainAxisAlignment: MainAxisAlignment.spaceEvenly,
               children: [
                 ToggleFlashlightButton(controller: controller),
-                SwitchCameraButton(controller: controller),
+                // SwitchCameraButton(controller: controller),
               ],
             ),
           ),
