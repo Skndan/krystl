@@ -40,14 +40,14 @@ class _HomeViewState extends State<HomeView> {
         model.getBalance();
       },
       builder: (context, model, child) => Scaffold(
-        floatingActionButtonLocation: FloatingActionButtonLocation.centerDocked,
-        floatingActionButtonAnimator: FloatingActionButtonAnimator.scaling,
-        floatingActionButton: FloatingActionButton(
-          child: const Icon(SolarIconsOutline.qrCode),
-          onPressed: () async {
-            RouterService.instance.pushTo(RouterConstant.scan);
-          },
-        ),
+        // floatingActionButtonLocation: FloatingActionButtonLocation.centerDocked,
+        // floatingActionButtonAnimator: FloatingActionButtonAnimator.scaling,
+        // floatingActionButton: FloatingActionButton(
+        //   child: const Icon(SolarIconsOutline.qrCode),
+        //   onPressed: () async {
+        //     RouterService.instance.pushTo(RouterConstant.scan);
+        //   },
+        // ),
         bottomNavigationBar: BottomNavigationBar(
           elevation: 4,
           enableFeedback: true,
@@ -58,15 +58,24 @@ class _HomeViewState extends State<HomeView> {
           items: [
             const BottomNavigationBarItem(
                 icon: Icon(SolarIconsBold.home), label: 'Home'),
-            BottomNavigationBarItem(icon: Container(), label: ''),
+            const BottomNavigationBarItem(
+                icon: Stack(
+                    children: <Widget>[
+                      Icon(SolarIconsBold.removeFolder),
+                      Positioned(  // draw a red marble
+                        top: 0.0,
+                        right: 0.0,
+                        child: Icon(Icons.brightness_1, size: 12.0,
+                            color: Colors.redAccent),
+                      )
+                    ]
+                ),
+                label: 'Home'),
             const BottomNavigationBarItem(
                 icon: Icon(SolarIconsBold.pieChart2), label: 'Report')
           ],
           currentIndex: bottom.index,
           onTap: (v) {
-            if (v == 1) {
-              return;
-            }
             bottom.toggle(v);
           },
         ),
@@ -87,28 +96,33 @@ class _HomeViewState extends State<HomeView> {
           ),
           centerTitle: true,
           actions: [
+            // IconButton(
+            //     onPressed: () {
+            //       model.getExpenses();
+            //       model.getBalance();
+            //     },
+            //     icon: const Icon(SolarIconsBold.refreshCircle)),
+            // IconButton(
+            //   onPressed: () {
+            //     model.changeTheme();
+            //   },
+            //   icon: theme == AppThemes.dark
+            //       ? const Icon(SolarIconsBold.moonStars)
+            //       : const Icon(SolarIconsBold.sunfog),
+            // ),
             IconButton(
                 onPressed: () {
-                  model.getExpenses();
-                  model.getBalance();
+                  RouterService.instance.pushTo(RouterConstant.profile);
                 },
-                icon: const Icon(SolarIconsBold.refreshCircle)),
-            IconButton(
-              onPressed: () {
-                model.changeTheme();
-              },
-              icon: theme == AppThemes.dark
-                  ? const Icon(SolarIconsBold.moonStars)
-                  : const Icon(SolarIconsBold.sunfog),
-            ),
-            IconButton(
-                onPressed: () {},
                 icon: const Icon(SolarIconsBold.hamburgerMenu)),
           ],
         ),
         body: [
           homeWidget(model),
-          const Center(),
+          const Center(
+            child: Text('Stat Page',
+                style: TextStyle(fontSize: 35, fontWeight: FontWeight.bold)),
+          ),
           const Center(
             child: Text('Stat Page',
                 style: TextStyle(fontSize: 35, fontWeight: FontWeight.bold)),

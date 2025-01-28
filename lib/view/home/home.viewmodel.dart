@@ -39,31 +39,6 @@ class HomeViewModel extends BaseModel with BaseViewModel {
     notifyListeners();
   }
 
-  AppThemes _appThemes = AppThemes.system;
-
-  void changeTheme() {
-    _appThemes =
-        getTheme() == AppThemes.light ? AppThemes.dark : AppThemes.light;
-
-    FBAnalytics.logEvent(name: "theme", parameters: {'theme': _appThemes.name});
-
-    context.read<ThemeNotifier>().changeValue(_appThemes);
-  }
-
-  getTheme() {
-    var theme = localManager.getString(Pref.theme);
-    var brightness = MediaQuery.of(context).platformBrightness;
-    bool isDarkMode = brightness == Brightness.dark;
-    if (theme == 'system') {
-      return isDarkMode ? AppThemes.dark : AppThemes.light;
-    }
-    if (theme == 'light') {
-      return AppThemes.light;
-    }
-    if (theme == 'dark') {
-      return AppThemes.dark;
-    }
-  }
 
   void showExpenseDialog() {
     showModalBottomSheet(
