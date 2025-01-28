@@ -47,88 +47,77 @@ class _HistoryViewState extends State<HistoryView> {
       _titlePaddingNotifier.value = _horizontalTitlePadding;
     });
     return BaseView<HistoryViewModel>(
-      onModelReady: (HistoryViewModel model) {
-        model.setContext(context);
-        model.init();
-        // model.checkBudget();
-        // model.getBudget();
-      },
-      builder: (context, model, child) => Scaffold(
-          floatingActionButton: FloatingActionButton(
-            child: const Icon(SolarIconsBold.addCircle),
-            onPressed: () {
-              // model.addBudget(null);
-            },
-          ),
-          body: FutureBuilder<List<Expense>>(
-            future: model.fetchExpenses(),
-            builder: (context, snapshot) {
-              if (snapshot.connectionState == ConnectionState.waiting) {
-                return const Center(child: CircularProgressIndicator());
-              } else if (snapshot.hasError) {
-                return Center(child: Text('Error: ${snapshot.error}'));
-              } else if (!snapshot.hasData || snapshot.data!.isEmpty) {
-                return const Center(child: Text('No expenses found'));
-              }
+        onModelReady: (HistoryViewModel model) {
+          model.setContext(context);
+          model.init();
+          // model.checkBudget();
+          // model.getBudget();
+        },
+        builder: (context, model, child) => Scaffold(
+              // floatingActionButton: FloatingActionButton(
+              //   child: const Icon(SolarIconsBold.addCircle),
+              //   onPressed: () {
+              //     // model.addBudget(null);
+              //   },
+              // ),
+              body: NestedScrollView(
+                  controller: _scrollController,
+                  headerSliverBuilder:
+                      (BuildContext context, bool innerBoxIsScrolled) {
+                    return [
+                      SliverAppBar(
+                          expandedHeight: kExpandedHeight,
+                          floating: true,
+                          pinned: true,
+                          flexibleSpace: FlexibleSpaceBar(
+                            collapseMode: CollapseMode.pin,
+                            centerTitle: false,
+                            titlePadding: const EdgeInsets.symmetric(
+                                vertical: 16, horizontal: 0),
+                            title: ValueListenableBuilder<double>(
+                              valueListenable: _titlePaddingNotifier,
+                              builder: (context, value, child) {
+                                return Padding(
+                                  padding:
+                                      EdgeInsets.symmetric(horizontal: value),
+                                  child: const Text(
+                                    "Your History",
+                                    style: TextStyle(
+                                      fontWeight: FontWeight.w700,
+                                    ),
+                                  ),
+                                );
+                              },
+                            ),
+                          )),
+                    ];
+                  },
+                  body: FutureBuilder<List<Expense>>(
+                    future: model.fetchExpenses(),
+                    builder: (context, snapshot) {
+                      if (snapshot.connectionState == ConnectionState.waiting) {
+                        return const Center(child: CircularProgressIndicator());
+                      } else if (snapshot.hasError) {
+                        return Center(child: Text('Error: ${snapshot.error}'));
+                      } else if (!snapshot.hasData || snapshot.data!.isEmpty) {
+                        return const Center(child: Text('No expenses found'));
+                      }
 
-              final groupedExpenses = model.groupExpensesByDate(snapshot.data!);
+                      final groupedExpenses =
+                          model.groupExpensesByDate(snapshot.data!);
 
-              return CustomScrollView(
-                controller: _scrollController,
-                slivers: _buildSlivers(groupedExpenses),
-              );
-            },
-          )),
-    );
+                      return CustomScrollView(
+                        slivers: _buildSlivers(groupedExpenses),
+                      );
+                    },
+                  )),
+            ));
   }
 
   List<Widget> _buildSlivers(Map<String, List<Expense>> groupedExpenses) {
     final List<Widget> slivers = [];
-    // slivers.add(SliverAppBar(
-    //     expandedHeight: kExpandedHeight,
-    //     floating: true,
-    //     pinned: true,
-    //     flexibleSpace: FlexibleSpaceBar(
-    //       collapseMode: CollapseMode.pin,
-    //       centerTitle: false,
-    //       titlePadding: const EdgeInsets.symmetric(vertical: 16, horizontal: 0),
-    //       title: ValueListenableBuilder<double>(
-    //         valueListenable: _titlePaddingNotifier,
-    //         builder: (context, value, child) {
-    //           return Padding(
-    //             padding: EdgeInsets.symmetric(horizontal: value),
-    //             child: const Text(
-    //               "History",
-    //               style: TextStyle(
-    //                 fontWeight: FontWeight.w700,
-    //               ),
-    //             ),
-    //           );
-    //         },
-    //       ),
-    //     )));
-
     groupedExpenses.forEach((date, expenses) {
       slivers.add(
-        //   SliverPersistentHeader(
-        //     delegate: _SliverHeaderDelegate(
-        //       child: Container(
-        //         height: 56,
-        //         color: context.colors.surface,
-        //         child: Center(
-        //           child: Text(
-        //             DateFormat('dd MMM yyyy').format(DateTime.parse(date)),
-        //             style: context.textTheme.bodyMedium?.copyWith(
-        //               color: context.colors.primary
-        //             ),
-        //           ),
-        //         ),
-        //       ),
-        //     ),
-        //     pinned: true
-        //   ),
-        // );
-
         SliverAppBar(
           title: Text(
             DateFormat('dd MMM yyyy').format(DateTime.parse(date)),
@@ -183,28 +172,5 @@ class _HistoryViewState extends State<HistoryView> {
     });
 
     return slivers;
-  }
-}
-
-class _SliverHeaderDelegate extends SliverPersistentHeaderDelegate {
-  final Widget child;
-
-  _SliverHeaderDelegate({required this.child});
-
-  @override
-  Widget build(
-      BuildContext context, double shrinkOffset, bool overlapsContent) {
-    return child;
-  }
-
-  @override
-  double get minExtent => 56;
-
-  @override
-  double get maxExtent => 56;
-
-  @override
-  bool shouldRebuild(SliverPersistentHeaderDelegate oldDelegate) {
-    return oldDelegate != this;
   }
 }
