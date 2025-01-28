@@ -5,6 +5,7 @@ import 'package:mobile_scanner/mobile_scanner.dart';
 
 class QrScannerView extends StatefulWidget {
   final Function(String) onDetect;
+
   const QrScannerView({super.key, required this.onDetect});
 
   @override
@@ -12,25 +13,27 @@ class QrScannerView extends StatefulWidget {
 }
 
 class _QrScannerViewState extends State<QrScannerView> {
+
   Barcode? _barcode;
 
-  void _buildBarcode(Barcode? value) {
-    if (value == null) {
-      widget.onDetect('');
-    }
-
-    widget.onDetect(value?.displayValue ?? '');
-    // return Text(
-    //   value.displayValue ?? 'No display value.',
-    //   overflow: TextOverflow.fade,
-    //   style: const TextStyle(color: Colors.white),
-    // );
+  void _buildBarcode(Barcode value) {
+    widget.onDetect(value.displayValue ?? '');
   }
 
   void _handleBarcode(BarcodeCapture barcodes) {
-    if (mounted) {
-      _barcode = barcodes.barcodes.firstOrNull;
-      _buildBarcode(_barcode);
+
+    if (!mounted) {
+      return;
+    }
+
+    _barcode = barcodes.barcodes.firstOrNull;
+
+    if (_barcode != null) {
+      // Pause the scanner for 5 seconds
+      controller.stop();
+
+      // Barcode detected and processed
+      _buildBarcode(_barcode!);
     }
   }
 
